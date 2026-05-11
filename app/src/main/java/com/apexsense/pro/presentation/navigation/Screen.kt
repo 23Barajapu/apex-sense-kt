@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object HardwareHistory : Screen("history")
     object GameTools : Screen("tools")
     object Profile : Screen("profile")
+    object SensitivityEngine : Screen("engine")
 }

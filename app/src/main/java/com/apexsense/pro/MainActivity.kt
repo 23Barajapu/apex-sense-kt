@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.apexsense.pro.presentation.components.ApexBottomBar
 import com.apexsense.pro.presentation.navigation.Screen
+import com.apexsense.pro.presentation.screens.engine.SensitivityEngineScreen
 import com.apexsense.pro.presentation.screens.history.HistoryScreen
 import com.apexsense.pro.presentation.screens.home.HomeScreen
 import com.apexsense.pro.presentation.screens.library.LibraryScreen
@@ -75,10 +76,13 @@ class MainActivity : ComponentActivity() {
                                 HistoryScreen(navController = navController)
                             }
                             composable(Screen.GameTools.route) {
-                                GameToolsScreen()
+                                GameToolsScreen(navController = navController)
                             }
                             composable(Screen.Profile.route) {
                                 ProfileScreen(navController = navController)
+                            }
+                            composable(Screen.SensitivityEngine.route) {
+                                SensitivityEngineScreen(navController = navController)
                             }
                         }
                     }

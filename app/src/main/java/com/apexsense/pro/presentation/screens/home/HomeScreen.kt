@@ -32,9 +32,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
     
-    var width by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-
     LaunchedEffect(Unit) {
         viewModel.startMonitoring(context)
     }
@@ -67,20 +64,6 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
 
             item {
                 HardwareMonitorPro(state)
-            }
-
-            item {
-                SensitivitySearchSection(
-                    width = width,
-                    height = height,
-                    onWidthChange = { width = it },
-                    onHeightChange = { height = it },
-                    onGenerate = {
-                        if (width.isNotEmpty() && height.isNotEmpty()) {
-                            navController.navigate(Screen.SensitivityResult.createRoute(width.toInt(), height.toInt()))
-                        }
-                    }
-                )
             }
 
             item {

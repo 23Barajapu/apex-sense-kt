@@ -16,17 +16,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.theme.AccentOrange
 import com.apexsense.pro.presentation.theme.DarkBackground
 import com.apexsense.pro.presentation.theme.SurfaceGray
 
 @Composable
-fun GameToolsScreen() {
+fun GameToolsScreen(navController: NavController) {
     var width by remember { mutableStateOf("1080") }
     var height by remember { mutableStateOf("2436") }
     var smallestWidth by remember { mutableStateOf("432") }
     
-    var gyroEnabled by remember { mutableStateOf(false) }
     var crosshairEnabled by remember { mutableStateOf(false) }
     var monitorEnabled by remember { mutableStateOf(false) }
 
@@ -117,12 +118,11 @@ fun GameToolsScreen() {
             }
 
             item {
-                ToggleToolItem(
-                    title = "Kalibrasi Gyro",
-                    subtitle = "Panduan visual untuk penyelarasan giroskop selama permainan",
-                    checked = gyroEnabled,
-                    onCheckedChange = { gyroEnabled = it },
-                    icon = Icons.Filled.Speed
+                ActionToolItem(
+                    title = "Sensitivity Engine",
+                    subtitle = "Automated sensitivity calculation based on device specs",
+                    onClick = { navController.navigate(Screen.SensitivityEngine.route) },
+                    icon = Icons.Filled.Calculate
                 )
             }
 
@@ -273,6 +273,34 @@ fun AppliedButton() {
         shape = RoundedCornerShape(16.dp)
     ) {
         Text("Diterapkan", color = Color.Gray)
+    }
+}
+
+@Composable
+fun ActionToolItem(
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    icon: ImageVector
+) {
+    Card(
+        onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = SurfaceGray),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(icon, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(subtitle, color = Color.Gray, fontSize = 11.sp)
+            }
+            Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = Color.Gray)
+        }
     }
 }
 
