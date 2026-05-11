@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.layout.onSizeChanged
 
 class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegistryOwner {
 
@@ -209,15 +210,20 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                         }
                     }
 
-                    // Dynamically update window size when config changes
-                    LaunchedEffect(config) {
-                        windowManager.updateViewLayout(this@apply, params)
-                    }
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier.padding(4.dp)
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .onSizeChanged { size ->
+                                // Explicitly update the WindowManager params with exact pixel sizes 
+                                // to overcome Android's WRAP_CONTENT updateViewLayout bugs.
+                                if (params.width != size.width || params.height != size.height) {
+                                    params.width = size.width
+                                    params.height = size.height
+                                    windowManager.updateViewLayout(this@apply, params)
+                                }
+                            }
                     ) {
                         // Drag Handle - High Fidelity
                         Box(
@@ -293,9 +299,9 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Icon(icon, contentDescription = null, tint = Color(0xFFB0B0B0), modifier = Modifier.size(16.dp))
             if (label.isNotEmpty()) {
-                Text(label, color = Color(0xFFB0B0B0), fontSize = 10.sp, fontWeight = FontWeight.Black)
+                Text(label, color = Color(0xFFB0B0B0), fontSize = 10.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
             }
-            Text(value, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+            Text(value, color = Color.White, fontSize = 12.sp, fontWeight = FontWeight.Bold, maxLines = 1, softWrap = false)
         }
     }
 
