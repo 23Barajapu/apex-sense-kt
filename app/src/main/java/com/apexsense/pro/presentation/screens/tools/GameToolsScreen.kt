@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.clickable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -286,6 +288,8 @@ fun ActionToolItem(
 
 @Composable
 fun CrosshairConfigArea() {
+    val config by CrosshairState.config.collectAsState()
+
     Card(
         modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF151210)),
@@ -295,11 +299,11 @@ fun CrosshairConfigArea() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 // Left Styles
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CrosshairStyleIcon(Icons.Filled.Add, CrosshairState.style == Icons.Filled.Add) { CrosshairState.style = Icons.Filled.Add }
-                    CrosshairStyleIcon(Icons.Filled.FilterCenterFocus, CrosshairState.style == Icons.Filled.FilterCenterFocus) { CrosshairState.style = Icons.Filled.FilterCenterFocus }
-                    CrosshairStyleIcon(Icons.Filled.HorizontalRule, CrosshairState.style == Icons.Filled.HorizontalRule) { CrosshairState.style = Icons.Filled.HorizontalRule }
-                    CrosshairStyleIcon(Icons.Filled.Circle, CrosshairState.style == Icons.Filled.Circle) { CrosshairState.style = Icons.Filled.Circle }
-                    CrosshairStyleIcon(Icons.Filled.Adjust, CrosshairState.style == Icons.Filled.Adjust) { CrosshairState.style = Icons.Filled.Adjust }
+                    CrosshairStyleIcon(Icons.Filled.Add, config.style == Icons.Filled.Add) { CrosshairState.update { it.copy(style = Icons.Filled.Add) } }
+                    CrosshairStyleIcon(Icons.Filled.FilterCenterFocus, config.style == Icons.Filled.FilterCenterFocus) { CrosshairState.update { it.copy(style = Icons.Filled.FilterCenterFocus) } }
+                    CrosshairStyleIcon(Icons.Filled.HorizontalRule, config.style == Icons.Filled.HorizontalRule) { CrosshairState.update { it.copy(style = Icons.Filled.HorizontalRule) } }
+                    CrosshairStyleIcon(Icons.Filled.Circle, config.style == Icons.Filled.Circle) { CrosshairState.update { it.copy(style = Icons.Filled.Circle) } }
+                    CrosshairStyleIcon(Icons.Filled.Adjust, config.style == Icons.Filled.Adjust) { CrosshairState.update { it.copy(style = Icons.Filled.Adjust) } }
                 }
 
                 // Center Positioner
@@ -312,12 +316,6 @@ fun CrosshairConfigArea() {
                         )
                     }
                     
-                    // Center Visual
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(CrosshairState.style, contentDescription = null, tint = CrosshairState.color.copy(alpha = CrosshairState.alpha), modifier = Modifier.size((24 * CrosshairState.size).dp))
-                        Text("0°", color = Color.Gray, fontSize = 12.sp)
-                    }
-                    
                     // Coordinates Label
                     Text("X: 0\nY: 0", color = Color.Gray, fontSize = 10.sp, modifier = Modifier.align(Alignment.TopStart).padding(8.dp))
                 }
@@ -325,14 +323,14 @@ fun CrosshairConfigArea() {
                 // Right Size Slider
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Size", color = Color.Gray, fontSize = 10.sp)
-                    Text("${String.format("%.1fx", CrosshairState.size)}", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Text("${String.format("%.1fx", config.size)}", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Box(modifier = Modifier.height(120.dp).width(40.dp)) {
+                    Box(modifier = Modifier.height(160.dp).width(40.dp)) {
                         Slider(
-                            value = CrosshairState.size,
-                            onValueChange = { CrosshairState.size = it },
+                            value = config.size,
+                            onValueChange = { newSize -> CrosshairState.update { it.copy(size = newSize) } },
                             valueRange = 0.5f..2.5f,
-                            modifier = Modifier.align(Alignment.Center).rotate(-90f),
+                            modifier = Modifier.align(Alignment.Center).rotate(-90f).width(160.dp),
                             colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
                         )
                     }
@@ -343,10 +341,21 @@ fun CrosshairConfigArea() {
 
             // Alpha Slider
             Column {
-                Text("Alpha ${ (CrosshairState.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
+                Text("Alpha ${ (config.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
                 Slider(
-                    value = CrosshairState.alpha,
-                    onValueChange = { CrosshairState.alpha = it },
+                    value = config.alpha,
+                    onValueChange = { newAlpha -> CrosshairState.update { it.copy(alpha = newAlpha) } },
+                    colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
+                )
+            }
+
+            // Rotation Slider
+            Column {
+                Text("Rotation ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
+                Slider(
+                    value = config.rotation,
+                    onValueChange = { newRot -> CrosshairState.update { it.copy(rotation = newRot) } },
+                    valueRange = 0f..360f,
                     colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
                 )
             }
@@ -361,8 +370,8 @@ fun CrosshairConfigArea() {
                         modifier = Modifier
                             .size(40.dp)
                             .background(color, RoundedCornerShape(12.dp))
-                            .border(if (CrosshairState.color == color) 2.dp else 0.dp, Color.White, RoundedCornerShape(12.dp))
-                            .clickable { CrosshairState.color = color }
+                            .border(if (config.color == color) 2.dp else 0.dp, Color.White, RoundedCornerShape(12.dp))
+                            .clickable { CrosshairState.update { it.copy(color = color) } }
                     )
                 }
             }

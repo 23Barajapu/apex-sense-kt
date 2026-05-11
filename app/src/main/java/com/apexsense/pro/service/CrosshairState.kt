@@ -1,17 +1,23 @@
 package com.apexsense.pro.service
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.coroutines.flow.MutableStateFlow
+
+data class CrosshairConfig(
+    val style: ImageVector = Icons.Filled.Add,
+    val color: Color = Color.Red,
+    val size: Float = 1.0f,
+    val alpha: Float = 1.0f,
+    val rotation: Float = 0f
+)
 
 object CrosshairState {
-    var style by mutableStateOf<ImageVector>(Icons.Filled.Add)
-    var color by mutableStateOf(Color.Red)
-    var size by mutableFloatStateOf(1.0f)
-    var alpha by mutableFloatStateOf(1.0f)
+    val config = MutableStateFlow(CrosshairConfig())
+    
+    fun update(update: (CrosshairConfig) -> CrosshairConfig) {
+        config.value = update(config.value)
+    }
 }
