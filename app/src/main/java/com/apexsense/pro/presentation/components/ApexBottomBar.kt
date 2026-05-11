@@ -25,7 +25,7 @@ fun ApexBottomBar(navController: NavController) {
     val currentRoute = navBackStackEntry?.destination?.route
 
     val items = listOf(
-        BottomNavItem.Library,
+        BottomNavItem.Profile,
         BottomNavItem.Home,
         BottomNavItem.Tools
     )

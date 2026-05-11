@@ -23,6 +23,7 @@ import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.screens.history.HistoryScreen
 import com.apexsense.pro.presentation.screens.home.HomeScreen
 import com.apexsense.pro.presentation.screens.library.LibraryScreen
+import com.apexsense.pro.presentation.screens.profile.ProfileScreen
 import com.apexsense.pro.presentation.screens.result.ResultScreen
 import com.apexsense.pro.presentation.screens.splash.SplashScreen
 import com.apexsense.pro.presentation.screens.tools.GameToolsScreen
@@ -75,6 +76,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(Screen.GameTools.route) {
                                 GameToolsScreen()
+                            }
+                            composable(Screen.Profile.route) {
+                                ProfileScreen(navController = navController)
                             }
                         }
                     }

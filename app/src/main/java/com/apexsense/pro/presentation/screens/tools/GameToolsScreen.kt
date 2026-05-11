@@ -55,8 +55,7 @@ fun GameToolsScreen() {
                         fontWeight = FontWeight.Black
                     )
                     Column(horizontalAlignment = Alignment.End) {
-                        Text("By FahrezONE", color = Color.Gray, fontSize = 12.sp)
-                        Text("ID 4d65c1b9", color = AccentOrange.copy(alpha = 0.5f), fontSize = 12.sp)
+                        Text("By B Word", color = Color.Gray, fontSize = 12.sp)
                     }
                 }
             }
@@ -128,23 +127,89 @@ fun GameToolsScreen() {
             }
 
             item {
-                ToggleToolItem(
-                    title = "Crosshair",
-                    subtitle = "Titik referensi di layar untuk penyelarasan tampilan",
-                    checked = crosshairEnabled,
-                    onCheckedChange = { crosshairEnabled = it },
-                    icon = Icons.Filled.FilterCenterFocus
-                )
+                Column {
+                    ToggleToolItem(
+                        title = "Crosshair",
+                        subtitle = "Titik referensi di layar untuk penyelarasan tampilan",
+                        checked = crosshairEnabled,
+                        onCheckedChange = { crosshairEnabled = it },
+                        icon = Icons.Filled.FilterCenterFocus
+                    )
+                    
+                    if (crosshairEnabled) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            colors = CardDefaults.cardColors(containerColor = SurfaceGray.copy(alpha = 0.5f)),
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text("KONFIGURASI", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                    Text("Warna", color = Color.White, fontSize = 14.sp)
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        ColorDot(Color.Red)
+                                        ColorDot(Color.Green)
+                                        ColorDot(AccentOrange)
+                                        ColorDot(Color.Cyan)
+                                    }
+                                }
+                                
+                                Spacer(modifier = Modifier.height(16.dp))
+                                
+                                Text("Ukuran", color = Color.White, fontSize = 14.sp)
+                                Slider(
+                                    value = 0.5f,
+                                    onValueChange = { },
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = AccentOrange,
+                                        activeTrackColor = AccentOrange
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             item {
-                ToggleToolItem(
-                    title = "Monitor Sesi",
-                    subtitle = "Pantau performa perangkat saat kamu bermain",
-                    checked = monitorEnabled,
-                    onCheckedChange = { monitorEnabled = it },
-                    icon = Icons.Filled.Analytics
-                )
+                Column {
+                    ToggleToolItem(
+                        title = "Monitor Sesi",
+                        subtitle = "Pantau performa perangkat saat kamu bermain",
+                        checked = monitorEnabled,
+                        onCheckedChange = { monitorEnabled = it },
+                        icon = Icons.Filled.Analytics
+                    )
+                    
+                    if (monitorEnabled) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            colors = CardDefaults.cardColors(containerColor = SurfaceGray.copy(alpha = 0.5f)),
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text("DATA MONITOR", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                Spacer(modifier = Modifier.height(12.dp))
+                                
+                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    MonitorChip("FPS", true)
+                                    MonitorChip("CPU", true)
+                                    MonitorChip("GPU", false)
+                                    MonitorChip("RAM", true)
+                                }
+                                
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("Interval Update: 1.0s", color = Color.White, fontSize = 12.sp)
+                            }
+                        }
+                    }
+                }
             }
 
             item { Spacer(modifier = Modifier.height(120.dp)) }
@@ -246,6 +311,33 @@ fun ToggleToolItem(
             )
         }
     }
+}
+
+@Composable
+fun MonitorChip(label: String, selected: Boolean) {
+    Surface(
+        color = if (selected) AccentOrange.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.05f),
+        shape = RoundedCornerShape(8.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (selected) AccentOrange else Color.Transparent)
+    ) {
+        Text(
+            text = label,
+            color = if (selected) AccentOrange else Color.Gray,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun ColorDot(color: Color) {
+    Box(
+        modifier = Modifier
+            .size(24.dp)
+            .background(color, androidx.compose.foundation.shape.CircleShape)
+            .border(2.dp, Color.White.copy(alpha = 0.1f), androidx.compose.foundation.shape.CircleShape)
+    )
 }
 
 // Add these to avoid unresolved imports in BasicTextField

@@ -9,7 +9,7 @@ sealed class BottomNavItem(
     val title: String,
     val icon: ImageVector
 ) {
-    object Library : BottomNavItem(Screen.GameLibrary.route, "Vault", Icons.Filled.GridView)
-    object Home : BottomNavItem(Screen.Home.route, "Boost", Icons.Filled.FlashOn)
+    object Profile : BottomNavItem(Screen.Profile.route, "Profile", Icons.Filled.Person)
+    object Home : BottomNavItem(Screen.Home.route, "Home", Icons.Filled.Home)
     object Tools : BottomNavItem(Screen.GameTools.route, "Game Tools", Icons.Filled.Handyman)
 }
