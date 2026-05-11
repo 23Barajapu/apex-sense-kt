@@ -1,12 +1,14 @@
 package com.apexsense.pro.presentation.screens.history
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,9 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.apexsense.pro.presentation.theme.AccentOrange
-import com.apexsense.pro.presentation.theme.DarkBackground
-import com.apexsense.pro.presentation.theme.SurfaceGray
+import com.apexsense.pro.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,17 +29,18 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel = vi
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Hardware History") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                title = { 
+                    Column {
+                        Text("PERF LOGS", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                        Text("HARDWARE ANALYTICS", fontSize = 10.sp, color = AccentOrange)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
             )
         },
         containerColor = DarkBackground
@@ -53,11 +54,13 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel = vi
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                item { Spacer(modifier = Modifier.height(8.dp)) }
+                
                 items(state.records) { record ->
-                    HistoryItem(record)
+                    ModernHistoryItem(record)
                 }
             }
         }
@@ -65,34 +68,48 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel = vi
 }
 
 @Composable
-fun HistoryItem(record: com.apexsense.pro.domain.model.HardwareHistory) {
+fun ModernHistoryItem(record: com.apexsense.pro.domain.model.HardwareHistory) {
     Card(
         colors = CardDefaults.cardColors(containerColor = SurfaceGray),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(20.dp))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(record.device_model, color = Color.White, fontWeight = FontWeight.Bold)
-                Text(record.created_at?.take(16) ?: "Recent", color = Color.Gray, fontSize = 10.sp)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    record.device_model.uppercase(), 
+                    color = Color.White, 
+                    fontWeight = FontWeight.Black,
+                    fontSize = 14.sp
+                )
+                Text(
+                    record.created_at?.take(16)?.replace("T", " ") ?: "RECENT SCAN", 
+                    color = Color.Gray, 
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium
+                )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                HistoryMetric("CPU", "${record.cpu_usage}%")
-                HistoryMetric("Temp", "${record.temp}°C")
+            
+            Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                HistoryMetricPro("CPU", "${record.cpu_usage}%")
+                HistoryMetricPro("TEMP", "${record.temp.toInt()}°C")
             }
         }
     }
 }
 
 @Composable
-fun HistoryMetric(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, color = Color.Gray, fontSize = 10.sp)
-        Text(value, color = AccentOrange, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+fun HistoryMetricPro(label: String, value: String) {
+    Column(horizontalAlignment = Alignment.End) {
+        Text(label, color = Color.Gray, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+        Text(value, color = AccentOrange, fontWeight = FontWeight.Black, fontSize = 16.sp)
     }
 }

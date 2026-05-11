@@ -1,13 +1,16 @@
 package com.apexsense.pro.presentation.screens.library
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -16,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.apexsense.pro.presentation.theme.AccentOrange
-import com.apexsense.pro.presentation.theme.DarkBackground
-import com.apexsense.pro.presentation.theme.SurfaceGray
+import com.apexsense.pro.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,23 +38,25 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Game Library") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                title = { 
+                    Column {
+                        Text("GAME VAULT", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                        Text("PERSONALIZED LIBRARY", fontSize = 10.sp, color = AccentOrange)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { /* Show Add Dialog */ },
-                containerColor = AccentOrange
+                containerColor = AccentOrange,
+                shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null, tint = Color.White)
             }
@@ -69,12 +73,18 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
+                item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 items(state.games) { game ->
-                    GameCard(game)
+                    ModernGameCard(game)
+                }
+                item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(80.dp))
                 }
             }
         }
@@ -82,10 +92,13 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
 }
 
 @Composable
-fun GameCard(game: com.apexsense.pro.domain.model.Game) {
+fun ModernGameCard(game: com.apexsense.pro.domain.model.Game) {
     Card(
         colors = CardDefaults.cardColors(containerColor = SurfaceGray),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
     ) {
         Column {
             Box {
@@ -94,28 +107,60 @@ fun GameCard(game: com.apexsense.pro.domain.model.Game) {
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp)
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                        .height(140.dp)
+                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
                     contentScale = ContentScale.Crop
                 )
+                // Gradient overlay
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
+                            )
+                        )
+                )
+                
                 IconButton(
                     onClick = { },
-                    modifier = Modifier.align(Alignment.TopEnd)
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .background(Color.Black.copy(alpha = 0.3f), CircleShape)
+                        .size(32.dp)
                 ) {
                     Icon(
                         if (game.is_favorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = null,
-                        tint = if (game.is_favorite) Color.Red else Color.White
+                        tint = if (game.is_favorite) AccentOrange else Color.White,
+                        modifier = Modifier.size(16.dp)
                     )
                 }
+                
+                Text(
+                    text = game.name.uppercase(),
+                    color = Color.White,
+                    fontWeight = FontWeight.Black,
+                    fontSize = 12.sp,
+                    modifier = Modifier
+                        .align(Alignment.BottomStart)
+                        .padding(12.dp),
+                    maxLines = 1
+                )
             }
-            Text(
-                text = game.name,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(12.dp),
-                maxLines = 1
-            )
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("INSTALLED", color = AccentOrange, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.apexsense.pro.presentation.screens.result
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,16 +16,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.apexsense.pro.presentation.theme.AccentOrange
-import com.apexsense.pro.presentation.theme.CardGray
-import com.apexsense.pro.presentation.theme.DarkBackground
-import com.apexsense.pro.presentation.theme.SurfaceGray
+import com.apexsense.pro.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,46 +42,69 @@ fun ResultScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Recommendations") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+                title = { 
+                    Column {
+                        Text("SYSTEM SCAN", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                        Text("SENSITIVITY OPTIMIZATION", fontSize = 10.sp, color = AccentOrange)
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = DarkBackground,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
             )
         },
         containerColor = DarkBackground
     ) { padding ->
-        if (state.isLoading) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = AccentOrange)
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .padding(16.dp)
-            ) {
-                if (state.device?.id == null) {
-                    Text(
-                        "Default Baseline Applied",
-                        color = Color.Yellow,
-                        modifier = Modifier.padding(bottom = 16.dp)
-                    )
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (state.isLoading) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = AccentOrange)
                 }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                        .padding(horizontal = 20.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Device Info Banner
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = AccentOrange.copy(alpha = 0.1f)),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(modifier = Modifier.size(4.dp, 24.dp).background(AccentOrange))
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                "MATCHING CONFIG FOR ${width}x${height}",
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
 
-                SensitivityGrid(state.device)
-                
-                Spacer(modifier = Modifier.height(32.dp))
-                
-                FeedbackSection { rating, sensation ->
-                    state.device?.id?.let { viewModel.submitFeedback(it, rating, sensation) }
+                    Spacer(modifier = Modifier.height(24.dp))
+                    
+                    Text("OPTIMIZED VALUES", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    SensitivityGridPro(state.device)
+                    
+                    Spacer(modifier = Modifier.height(32.dp))
+                    
+                    FeedbackSectionPro { rating, sensation ->
+                        state.device?.id?.let { viewModel.submitFeedback(it, rating, sensation) }
+                    }
                 }
             }
         }
@@ -89,33 +112,36 @@ fun ResultScreen(
 }
 
 @Composable
-fun SensitivityGrid(device: com.apexsense.pro.domain.model.Device?) {
+fun SensitivityGridPro(device: com.apexsense.pro.domain.model.Device?) {
     val items = listOf(
         "DPI" to (device?.recommended_dpi ?: 440).toString(),
-        "General" to (device?.gen_sens ?: 95.0).toString(),
-        "Red Dot" to (device?.red_dot_sens ?: 90.0).toString(),
-        "2x Scope" to (device?.scope_2x_sens ?: 85.0).toString(),
-        "4x Scope" to (device?.scope_4x_sens ?: 80.0).toString(),
-        "Sniper" to (device?.sniper_sens ?: 50.0).toString()
+        "GENERAL" to (device?.gen_sens ?: 95.0).toString(),
+        "RED DOT" to (device?.red_dot_sens ?: 90.0).toString(),
+        "2X SCOPE" to (device?.scope_2x_sens ?: 85.0).toString(),
+        "4X SCOPE" to (device?.scope_4x_sens ?: 80.0).toString(),
+        "SNIPER" to (device?.sniper_sens ?: 50.0).toString()
     )
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.height(300.dp)
+        modifier = Modifier.height(360.dp)
     ) {
         items(items) { (label, value) ->
             Card(
                 colors = CardDefaults.cardColors(containerColor = SurfaceGray),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(20.dp))
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier.padding(20.dp),
+                    horizontalAlignment = Alignment.Start
                 ) {
-                    Text(label, color = Color.Gray, fontSize = 12.sp)
-                    Text(value, color = AccentOrange, fontWeight = FontWeight.Black, fontSize = 24.sp)
+                    Text(label, color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(value, color = Color.White, fontWeight = FontWeight.Black, fontSize = 28.sp)
+                    Box(modifier = Modifier.fillMaxWidth().height(2.dp).background(AccentOrange.copy(alpha = 0.3f)))
                 }
             }
         }
@@ -123,37 +149,57 @@ fun SensitivityGrid(device: com.apexsense.pro.domain.model.Device?) {
 }
 
 @Composable
-fun FeedbackSection(onSubmit: (String, String) -> Unit) {
+fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
     var sensation by remember { mutableStateOf("Pas") }
     
     Card(
         colors = CardDefaults.cardColors(containerColor = SurfaceGray),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier.border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text("Is it perfect?", color = Color.White, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                IconButton(onClick = { onSubmit("Upvote", sensation) }) {
-                    Icon(Icons.Filled.ThumbUp, contentDescription = null, tint = AccentOrange)
-                }
-                IconButton(onClick = { onSubmit("Downvote", sensation) }) {
-                    Icon(Icons.Filled.ThumbDown, contentDescription = null, tint = Color.Gray)
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text("CALIBRATION FEEDBACK", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                listOf("Licin", "Pas", "Kesat").forEach { option ->
+                    val isSelected = sensation == option
+                    Button(
+                        onClick = { sensation = option },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelected) AccentOrange else CardGray
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Text(option, fontSize = 12.sp, color = if (isSelected) Color.White else Color.Gray)
+                    }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                listOf("Licin", "Pas", "Kesat").forEach { option ->
-                    FilterChip(
-                        selected = sensation == option,
-                        onClick = { sensation = option },
-                        label = { Text(option) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = AccentOrange,
-                            labelColor = Color.Gray,
-                            selectedLabelColor = Color.White
-                        )
-                    )
+            
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                OutlinedButton(
+                    onClick = { onSubmit("Upvote", sensation) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, AccentOrange)
+                ) {
+                    Icon(Icons.Filled.ThumbUp, contentDescription = null, tint = AccentOrange)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("PERFECT", color = AccentOrange)
+                }
+                OutlinedButton(
+                    onClick = { onSubmit("Downvote", sensation) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, Color.Gray)
+                ) {
+                    Icon(Icons.Filled.ThumbDown, contentDescription = null, tint = Color.Gray)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("ADJUST", color = Color.Gray)
                 }
             }
         }
