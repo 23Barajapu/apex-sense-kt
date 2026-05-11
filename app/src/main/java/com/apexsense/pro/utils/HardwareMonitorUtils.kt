@@ -50,6 +50,19 @@ object HardwareMonitorUtils {
         return (base + threadBonus).coerceIn(5, 45)
     }
 
+    fun getBatteryLevel(context: Context): Int {
+        val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        return intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+    }
+
+    fun getRamUsage(context: Context): Int {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+        val memoryInfo = android.app.ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+        val usedMemory = memoryInfo.totalMem - memoryInfo.availMem
+        return (usedMemory.toDouble() / memoryInfo.totalMem * 100).toInt()
+    }
+
     fun getBatteryTemperature(context: Context): Double {
         val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         val temp = intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0

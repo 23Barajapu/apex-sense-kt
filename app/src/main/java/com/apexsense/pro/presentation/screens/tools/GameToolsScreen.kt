@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.clickable
@@ -26,12 +27,14 @@ import com.apexsense.pro.presentation.theme.DarkBackground
 import com.apexsense.pro.presentation.theme.SurfaceGray
 import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.service.CrosshairState
+import com.apexsense.pro.service.MonitorState
 import com.apexsense.pro.service.OverlayService
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun GameToolsScreen(navController: NavController) {
+    val context = LocalContext.current
     var width by remember { mutableStateOf("1080") }
     var height by remember { mutableStateOf("2436") }
     var smallestWidth by remember { mutableStateOf("432") }
@@ -136,7 +139,6 @@ fun GameToolsScreen(navController: NavController) {
 
             item {
                 Column {
-                    val context = LocalContext.current
                     ToggleToolItem(
                         title = "Crosshair",
                         subtitle = "Titik referensi di layar untuk penyelarasan tampilan",
@@ -163,7 +165,13 @@ fun GameToolsScreen(navController: NavController) {
                         title = "Monitor Sesi",
                         subtitle = "Pantau performa perangkat saat kamu bermain",
                         checked = monitorEnabled,
-                        onCheckedChange = { monitorEnabled = it },
+                        onCheckedChange = { 
+                            monitorEnabled = it
+                            val intent = Intent(context, OverlayService::class.java).apply {
+                                action = if (it) "SHOW_MONITOR" else "HIDE_MONITOR"
+                            }
+                            context.startService(intent)
+                        },
                         icon = Icons.Filled.Analytics
                     )
                     
@@ -172,22 +180,18 @@ fun GameToolsScreen(navController: NavController) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 8.dp),
-                            colors = CardDefaults.cardColors(containerColor = SurfaceGray.copy(alpha = 0.5f)),
-                            shape = RoundedCornerShape(20.dp)
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFF151210)),
+                            shape = RoundedCornerShape(24.dp)
                         ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text("DATA MONITOR", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                                Spacer(modifier = Modifier.height(12.dp))
-                                
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    MonitorChip("FPS", true)
-                                    MonitorChip("CPU", true)
-                                    MonitorChip("GPU", false)
-                                    MonitorChip("RAM", true)
-                                }
-                                
-                                Spacer(modifier = Modifier.height(16.dp))
-                                Text("Interval Update: 1.0s", color = Color.White, fontSize = 12.sp)
+                            val monitorConfig by MonitorState.config.collectAsState()
+                            Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                MonitorToggleItem("CPU Information", monitorConfig.showCpu) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
+                                MonitorToggleItem("GPU Information", monitorConfig.showGpu) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
+                                MonitorToggleItem("RAM Information", monitorConfig.showRam) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
+                                MonitorToggleItem("Battery Information", monitorConfig.showBattery) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
+                                MonitorToggleItem("Temperature Information", monitorConfig.showTemp) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
+                                MonitorToggleItem("FPS Information", monitorConfig.showFps) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
+                                MonitorToggleItem("Time Information", monitorConfig.showTime) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTime = !c.showTime) } }
                             }
                         }
                     }
@@ -307,7 +311,7 @@ fun CrosshairConfigArea() {
                 }
 
                 // Center Positioner
-                Box(modifier = Modifier.size(160.dp), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.size(200.dp), contentAlignment = Alignment.Center) {
                     // Joystick Outer Ring
                     androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
                         drawCircle(
@@ -325,12 +329,12 @@ fun CrosshairConfigArea() {
                     Text("Size", color = Color.Gray, fontSize = 10.sp)
                     Text("${String.format("%.1fx", config.size)}", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Box(modifier = Modifier.height(160.dp).width(40.dp)) {
+                    Box(modifier = Modifier.height(200.dp).width(40.dp)) {
                         Slider(
                             value = config.size,
                             onValueChange = { newSize -> CrosshairState.update { it.copy(size = newSize) } },
                             valueRange = 0.5f..2.5f,
-                            modifier = Modifier.align(Alignment.Center).rotate(-90f).width(160.dp),
+                            modifier = Modifier.align(Alignment.Center).rotate(-90f).width(200.dp),
                             colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
                         )
                     }
@@ -349,15 +353,45 @@ fun CrosshairConfigArea() {
                 )
             }
 
-            // Rotation Slider
+            // Rotation Controls
             Column {
-                Text("Rotation ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Rotation ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SmallStepButton(Icons.Default.Remove) { 
+                            CrosshairState.update { it.copy(rotation = (it.rotation - 1f).let { r -> if (r < 0) r + 360 else r }) } 
+                        }
+                        SmallStepButton(Icons.Default.Add) { 
+                            CrosshairState.update { it.copy(rotation = (it.rotation + 1f) % 360) } 
+                        }
+                    }
+                }
                 Slider(
                     value = config.rotation,
                     onValueChange = { newRot -> CrosshairState.update { it.copy(rotation = newRot) } },
                     valueRange = 0f..360f,
                     colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
                 )
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val presets = listOf(0f, 45f, 90f, 135f, 180f)
+                    presets.forEach { angle ->
+                        AngleChip(
+                            label = "${angle.toInt()}°",
+                            isSelected = config.rotation == angle,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            CrosshairState.update { it.copy(rotation = angle) }
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -473,4 +507,64 @@ fun BasicTextField(
         textStyle = textStyle,
         modifier = modifier
     )
+}
+
+@Composable
+fun SmallStepButton(icon: ImageVector, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = Color.White.copy(alpha = 0.05f),
+        shape = RoundedCornerShape(8.dp),
+        modifier = Modifier.size(28.dp)
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
+        }
+    }
+}
+
+@Composable
+fun AngleChip(label: String, isSelected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Surface(
+        onClick = onClick,
+        color = if (isSelected) AccentOrange.copy(alpha = 0.2f) else Color.White.copy(alpha = 0.03f),
+        shape = RoundedCornerShape(10.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, if (isSelected) AccentOrange else Color.Transparent),
+        modifier = modifier
+    ) {
+        Text(
+            text = label,
+            color = if (isSelected) AccentOrange else Color.Gray,
+            modifier = Modifier.padding(vertical = 8.dp),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun MonitorToggleItem(label: String, isChecked: Boolean, onToggle: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onToggle),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(label, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+        Box(
+            modifier = Modifier
+                .size(24.dp)
+                .background(
+                    if (isChecked) AccentOrange else Color.White.copy(alpha = 0.05f),
+                    RoundedCornerShape(6.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isChecked) {
+                Icon(Icons.Default.Check, contentDescription = null, tint = Color.Black, modifier = Modifier.size(16.dp))
+            }
+        }
+    }
 }
