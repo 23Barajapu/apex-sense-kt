@@ -12,15 +12,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.theme.AccentOrange
 import com.apexsense.pro.presentation.theme.DarkBackground
 import com.apexsense.pro.presentation.theme.SurfaceGray
+import com.apexsense.pro.presentation.navigation.Screen
+import com.apexsense.pro.service.CrosshairState
+import com.apexsense.pro.service.OverlayService
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun GameToolsScreen(navController: NavController) {
@@ -128,49 +134,23 @@ fun GameToolsScreen(navController: NavController) {
 
             item {
                 Column {
+                    val context = LocalContext.current
                     ToggleToolItem(
                         title = "Crosshair",
                         subtitle = "Titik referensi di layar untuk penyelarasan tampilan",
                         checked = crosshairEnabled,
-                        onCheckedChange = { crosshairEnabled = it },
+                        onCheckedChange = { 
+                            crosshairEnabled = it
+                            val intent = Intent(context, OverlayService::class.java).apply {
+                                action = if (it) "SHOW_CROSSHAIR" else "HIDE_CROSSHAIR"
+                            }
+                            context.startService(intent)
+                        },
                         icon = Icons.Filled.FilterCenterFocus
                     )
                     
                     if (crosshairEnabled) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            colors = CardDefaults.cardColors(containerColor = SurfaceGray.copy(alpha = 0.5f)),
-                            shape = RoundedCornerShape(20.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text("KONFIGURASI", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                                Spacer(modifier = Modifier.height(16.dp))
-                                
-                                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    Text("Warna", color = Color.White, fontSize = 14.sp)
-                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                        ColorDot(Color.Red)
-                                        ColorDot(Color.Green)
-                                        ColorDot(AccentOrange)
-                                        ColorDot(Color.Cyan)
-                                    }
-                                }
-                                
-                                Spacer(modifier = Modifier.height(16.dp))
-                                
-                                Text("Ukuran", color = Color.White, fontSize = 14.sp)
-                                Slider(
-                                    value = 0.5f,
-                                    onValueChange = { },
-                                    colors = SliderDefaults.colors(
-                                        thumbColor = AccentOrange,
-                                        activeTrackColor = AccentOrange
-                                    )
-                                )
-                            }
-                        }
+                        CrosshairConfigArea()
                     }
                 }
             }
@@ -301,6 +281,108 @@ fun ActionToolItem(
             }
             Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = Color.Gray)
         }
+    }
+}
+
+@Composable
+fun CrosshairConfigArea() {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF151210)),
+        shape = RoundedCornerShape(24.dp)
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                // Left Styles
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    CrosshairStyleIcon(Icons.Filled.Add, CrosshairState.style == Icons.Filled.Add) { CrosshairState.style = Icons.Filled.Add }
+                    CrosshairStyleIcon(Icons.Filled.FilterCenterFocus, CrosshairState.style == Icons.Filled.FilterCenterFocus) { CrosshairState.style = Icons.Filled.FilterCenterFocus }
+                    CrosshairStyleIcon(Icons.Filled.HorizontalRule, CrosshairState.style == Icons.Filled.HorizontalRule) { CrosshairState.style = Icons.Filled.HorizontalRule }
+                    CrosshairStyleIcon(Icons.Filled.Circle, CrosshairState.style == Icons.Filled.Circle) { CrosshairState.style = Icons.Filled.Circle }
+                    CrosshairStyleIcon(Icons.Filled.Adjust, CrosshairState.style == Icons.Filled.Adjust) { CrosshairState.style = Icons.Filled.Adjust }
+                }
+
+                // Center Positioner
+                Box(modifier = Modifier.size(160.dp), contentAlignment = Alignment.Center) {
+                    // Joystick Outer Ring
+                    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawCircle(
+                            color = Color.White.copy(alpha = 0.05f),
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                        )
+                    }
+                    
+                    // Center Visual
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(CrosshairState.style, contentDescription = null, tint = CrosshairState.color.copy(alpha = CrosshairState.alpha), modifier = Modifier.size((24 * CrosshairState.size).dp))
+                        Text("0°", color = Color.Gray, fontSize = 12.sp)
+                    }
+                    
+                    // Coordinates Label
+                    Text("X: 0\nY: 0", color = Color.Gray, fontSize = 10.sp, modifier = Modifier.align(Alignment.TopStart).padding(8.dp))
+                }
+
+                // Right Size Slider
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Size", color = Color.Gray, fontSize = 10.sp)
+                    Text("${String.format("%.1fx", CrosshairState.size)}", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(modifier = Modifier.height(120.dp).width(40.dp)) {
+                        Slider(
+                            value = CrosshairState.size,
+                            onValueChange = { CrosshairState.size = it },
+                            valueRange = 0.5f..2.5f,
+                            modifier = Modifier.align(Alignment.Center).rotate(-90f),
+                            colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Alpha Slider
+            Column {
+                Text("Alpha ${ (CrosshairState.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
+                Slider(
+                    value = CrosshairState.alpha,
+                    onValueChange = { CrosshairState.alpha = it },
+                    colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Color Palette
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                val colors = listOf(Color.Red, Color(0xFFFF8C00), Color.White, Color.Yellow, Color.Blue, Color.Cyan)
+                colors.forEach { color ->
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(color, RoundedCornerShape(12.dp))
+                            .border(if (CrosshairState.color == color) 2.dp else 0.dp, Color.White, RoundedCornerShape(12.dp))
+                            .clickable { CrosshairState.color = color }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CrosshairStyleIcon(icon: ImageVector, isSelected: Boolean, onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(44.dp)
+            .background(
+                if (isSelected) AccentOrange.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.03f),
+                RoundedCornerShape(12.dp)
+            )
+            .border(1.dp, if (isSelected) AccentOrange else Color.Transparent, RoundedCornerShape(12.dp))
+    ) {
+        Icon(icon, contentDescription = null, tint = if (isSelected) AccentOrange else Color.Gray, modifier = Modifier.size(20.dp))
     }
 }
 
