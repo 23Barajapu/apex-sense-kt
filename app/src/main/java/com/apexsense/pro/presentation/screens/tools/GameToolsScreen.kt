@@ -27,7 +27,8 @@ import com.apexsense.pro.presentation.theme.DarkBackground
 import com.apexsense.pro.presentation.theme.SurfaceGray
 import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.service.CrosshairState
-import com.apexsense.pro.service.MonitorState
+import com.apexsense.pro.service.AppMonitorState
+import com.apexsense.pro.service.MonitorConfig
 import com.apexsense.pro.service.OverlayService
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
@@ -183,15 +184,15 @@ fun GameToolsScreen(navController: NavController) {
                             colors = CardDefaults.cardColors(containerColor = Color(0xFF151210)),
                             shape = RoundedCornerShape(24.dp)
                         ) {
-                            val monitorConfig by MonitorState.config.collectAsState()
+                            val monitorConfig by AppMonitorState.config.collectAsState()
                             Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                MonitorToggleItem("CPU Information", monitorConfig.showCpu) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
-                                MonitorToggleItem("GPU Information", monitorConfig.showGpu) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
-                                MonitorToggleItem("RAM Information", monitorConfig.showRam) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
-                                MonitorToggleItem("Battery Information", monitorConfig.showBattery) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
-                                MonitorToggleItem("Temperature Information", monitorConfig.showTemp) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
-                                MonitorToggleItem("FPS Information", monitorConfig.showFps) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
-                                MonitorToggleItem("Time Information", monitorConfig.showTime) { MonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTime = !c.showTime) } }
+                                MonitorToggleItem("CPU Information", monitorConfig.showCpu) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
+                                MonitorToggleItem("GPU Information", monitorConfig.showGpu) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
+                                MonitorToggleItem("RAM Information", monitorConfig.showRam) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
+                                MonitorToggleItem("Battery Information", monitorConfig.showBattery) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
+                                MonitorToggleItem("Temperature Information", monitorConfig.showTemp) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
+                                MonitorToggleItem("FPS Information", monitorConfig.showFps) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
+                                MonitorToggleItem("Time Information", monitorConfig.showTime) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTime = !c.showTime) } }
                             }
                         }
                     }

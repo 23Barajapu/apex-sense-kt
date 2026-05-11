@@ -192,7 +192,7 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
             
             setContent {
                 ApexSenseTheme {
-                    val config by MonitorState.config.collectAsState()
+                    val config by AppMonitorState.config.collectAsState()
                     var cpuUsage by remember { mutableIntStateOf(0) }
                     var ramUsage by remember { mutableIntStateOf(0) }
                     var batteryLevel by remember { mutableIntStateOf(0) }
@@ -210,20 +210,16 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                         }
                     }
 
+                    // Force WindowManager to refresh WRAP_CONTENT bounds after Compose finishes layout
+                    LaunchedEffect(config) {
+                        kotlinx.coroutines.delay(100) // Wait for Compose to finish measuring
+                        windowManager.updateViewLayout(this@apply, params)
+                    }
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .onSizeChanged { size ->
-                                // Explicitly update the WindowManager params with exact pixel sizes 
-                                // to overcome Android's WRAP_CONTENT updateViewLayout bugs.
-                                if (params.width != size.width || params.height != size.height) {
-                                    params.width = size.width
-                                    params.height = size.height
-                                    windowManager.updateViewLayout(this@apply, params)
-                                }
-                            }
+                        modifier = Modifier.padding(4.dp)
                     ) {
                         // Drag Handle - High Fidelity
                         Box(
