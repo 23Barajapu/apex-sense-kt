@@ -115,11 +115,11 @@ fun ResultScreen(
 fun SensitivityGridPro(device: com.apexsense.pro.domain.model.Device?) {
     val items = listOf(
         "DPI" to (device?.recommended_dpi ?: 440).toString(),
-        "GENERAL" to (device?.gen_sens ?: 95.0).toString(),
-        "RED DOT" to (device?.red_dot_sens ?: 90.0).toString(),
-        "2X SCOPE" to (device?.scope_2x_sens ?: 85.0).toString(),
-        "4X SCOPE" to (device?.scope_4x_sens ?: 80.0).toString(),
-        "SNIPER" to (device?.sniper_sens ?: 50.0).toString()
+        "GENERAL" to (device?.gen_sens?.toInt() ?: 95).toString(),
+        "RED DOT" to (device?.red_dot_sens?.toInt() ?: 90).toString(),
+        "2X SCOPE" to (device?.scope_2x_sens?.toInt() ?: 85).toString(),
+        "4X SCOPE" to (device?.scope_4x_sens?.toInt() ?: 80).toString(),
+        "SNIPER" to (device?.sniper_sens?.toInt() ?: 50).toString()
     )
 
     LazyVerticalGrid(
