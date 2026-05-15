@@ -30,20 +30,20 @@ class ResultViewModel : ViewModel() {
             val deviceData = if (result != null) {
                 result
             } else {
-                // Smart Fallback Logic
+                // Pro-Level High Response Logic
                 val resolutionFactor = (width.toDouble() * height.toDouble()) / 1_000_000.0
-                val baseSens = (120.0 + (resolutionFactor * 8.0)).coerceIn(0.0, 200.0)
+                val baseSens = (175.0 + (resolutionFactor * 1.5)).coerceIn(160.0, 190.0)
                 
                 Device(
                     screen_width = width,
                     screen_height = height,
-                    recommended_dpi = if (width > 1000) 480 else 400,
+                    recommended_dpi = if (width > 1000) 480 else 440,
                     gen_sens = Math.round(baseSens).toDouble(),
-                    red_dot_sens = Math.round(baseSens * 0.95).toDouble().coerceAtMost(200.0),
-                    scope_2x_sens = Math.round(baseSens * 0.88).toDouble().coerceAtMost(200.0),
-                    scope_4x_sens = Math.round(baseSens * 0.78).toDouble().coerceAtMost(200.0),
-                    sniper_sens = Math.round(baseSens * 0.55).toDouble().coerceAtMost(200.0),
-                    free_look_sens = Math.round(baseSens).toDouble()
+                    red_dot_sens = Math.round(baseSens * 1.11).toDouble().coerceAtMost(200.0),
+                    scope_2x_sens = Math.round(baseSens * 1.08).toDouble().coerceAtMost(200.0),
+                    scope_4x_sens = Math.round(baseSens * 1.09).toDouble().coerceAtMost(200.0),
+                    sniper_sens = Math.round(baseSens * 0.68).toDouble().coerceAtMost(200.0),
+                    free_look_sens = Math.round(baseSens * 0.77).toDouble().coerceAtMost(200.0)
                 )
             }
             

@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.theme.*
@@ -122,6 +124,7 @@ fun EngineTextField(value: String, onValueChange: (String) -> Unit, label: Strin
             placeholder = { Text(placeholder, fontSize = 14.sp, color = Color.Gray.copy(alpha = 0.5f)) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = AccentOrange,
                 unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
