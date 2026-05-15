@@ -32,7 +32,8 @@ import com.apexsense.pro.service.OverlayService
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.draw.clip
+import com.apexsense.pro.presentation.components.CopyrightFooter
+import com.apexsense.pro.presentation.components.PageHeader
 
 @Composable
 fun GameToolsScreen(navController: NavController) {
@@ -59,32 +60,7 @@ fun GameToolsScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                Spacer(modifier = Modifier.height(40.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val logoId = remember(context) {
-                        context.resources.getIdentifier("app_logo", "drawable", context.packageName)
-                    }
-                    Image(
-                        painter = painterResource(id = if (logoId != 0) logoId else android.R.drawable.ic_menu_gallery),
-                        contentDescription = "App Logo",
-                        modifier = Modifier
-                            .size(54.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            "Game Tools",
-                            color = Color.White,
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Black
-                        )
-                        Text("By B Word", color = Color.Gray, fontSize = 12.sp)
-                    }
-                }
+                PageHeader(title = "Tools")
             }
 
             item {
@@ -213,6 +189,9 @@ fun GameToolsScreen(navController: NavController) {
                 }
             }
 
+            item {
+                CopyrightFooter()
+            }
             item { Spacer(modifier = Modifier.height(120.dp)) }
         }
     }

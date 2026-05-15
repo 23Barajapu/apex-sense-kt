@@ -40,6 +40,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.delay
+import com.apexsense.pro.presentation.theme.AccentOrange
+import androidx.compose.ui.layout.onGloballyPositioned
 
 class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegistryOwner {
 
@@ -229,7 +231,7 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                         )
                         .apply {
                             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-                            y = 100
+                            y = 60 // Closer to top like a status bar
                         }
 
         monitorView =
@@ -256,98 +258,47 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                                     temperature =
                                             HardwareMonitorUtils.getBatteryTemperature(
                                                     this@apply.context
-                                            )
+                                             )
                                     currentTime =
-                                            SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                                            SimpleDateFormat("HH:mm", Locale.getDefault())
                                                     .format(Date())
                                     delay(1000)
                                 }
                             }
 
-                            // Force WindowManager to refresh WRAP_CONTENT bounds after Compose
-                            // finishes layout
                             LaunchedEffect(config) {
-                                kotlinx.coroutines.delay(
-                                        100
-                                ) // Wait for Compose to finish measuring
+                                delay(100)
                                 windowManager.updateViewLayout(this@apply, params)
                             }
 
+                            // Stats Pill - Truly Dynamic Wide Layout
                             Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                    modifier = Modifier.padding(4.dp)
+                                modifier = Modifier
+                                    .onGloballyPositioned { _ ->
+                                        windowManager.updateViewLayout(this@apply, params)
+                                    }
+                                    .background(Color.Black.copy(alpha = 0.9f), RoundedCornerShape(18.dp))
+                                    .padding(horizontal = 24.dp, vertical = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(40.dp)
                             ) {
-                                // Drag Handle - High Fidelity
-                                Box(
-                                        modifier =
-                                                Modifier.size(34.dp)
-                                                        .background(
-                                                                Color(0xFF5C1616),
-                                                                RoundedCornerShape(10.dp)
-                                                        )
-                                                        .border(
-                                                                1.5.dp,
-                                                                Color.White.copy(alpha = 0.2f),
-                                                                RoundedCornerShape(10.dp)
-                                                        ),
-                                        contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                            imageVector = Icons.Default.OpenWith,
-                                            contentDescription = null,
-                                            tint = Color.White,
-                                            modifier = Modifier.size(20.dp)
-                                    )
-                                }
-
-                                // Stats Pill - High Fidelity
-                                Row(
-                                        modifier =
-                                                Modifier.height(34.dp)
-                                                        .background(
-                                                                Color.Black.copy(alpha = 0.85f),
-                                                                RoundedCornerShape(100.dp)
-                                                        )
-                                                        .padding(horizontal = 14.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                                ) {
-                                    if (config.showCpu)
-                                            MonitorStatItem(
-                                                    Icons.Default.Memory,
-                                                    "CPU",
-                                                    "$cpuUsage %"
-                                            )
-                                    if (config.showGpu)
-                                            MonitorStatItem(
-                                                    Icons.Default.DeveloperBoard,
-                                                    "GPU",
-                                                    "27 %"
-                                            )
-                                    if (config.showRam)
-                                            MonitorStatItem(
-                                                    Icons.Default.Storage,
-                                                    "RAM",
-                                                    "$ramUsage %"
-                                            )
-                                    if (config.showBattery)
-                                            MonitorStatItem(
-                                                    Icons.Default.BatteryFull,
-                                                    "",
-                                                    "$batteryLevel %"
-                                            )
-                                    if (config.showTemp)
-                                            MonitorStatItem(
-                                                    Icons.Default.DeviceThermostat,
-                                                    "",
-                                                    "${temperature.toInt()} °C"
-                                            )
-                                    if (config.showFps)
-                                            MonitorStatItem(Icons.Default.Layers, "FPS", "119")
-                                    if (config.showTime)
-                                            MonitorStatItem(Icons.Default.Schedule, "", currentTime)
-                                }
+                                if (config.showCpu)
+                                    MonitorStatItem("CPU", "$cpuUsage%")
+                                
+                                if (config.showRam)
+                                    MonitorStatItem("RAM", "$ramUsage%")
+                                
+                                if (config.showTemp)
+                                    MonitorStatItem("TMP", "${temperature.toInt()}°C")
+                                
+                                if (config.showFps)
+                                    MonitorStatItem("FPS", "120")
+                                
+                                if (config.showBattery)
+                                    MonitorStatItem("BAT", "$batteryLevel%", isBattery = true)
+                                
+                                if (config.showTime)
+                                    MonitorStatItem("TIME", currentTime)
                             }
                         }
                     }
@@ -386,38 +337,55 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
 
     @Composable
     private fun MonitorStatItem(
-            icon: androidx.compose.ui.graphics.vector.ImageVector,
-            label: String,
-            value: String
+        label: String,
+        value: String,
+        isBattery: Boolean = false
     ) {
-        Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Icon(
-                    icon,
-                    contentDescription = null,
-                    tint = Color(0xFFB0B0B0),
-                    modifier = Modifier.size(16.dp)
-            )
-            if (label.isNotEmpty()) {
-                Text(
-                        label,
-                        color = Color(0xFFB0B0B0),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Black,
-                        maxLines = 1,
-                        softWrap = false
-                )
-            }
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                    value,
+                text = label,
+                color = AccentOrange,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Black,
+                letterSpacing = 1.sp,
+                maxLines = 1,
+                softWrap = false
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            if (isBattery) {
+                val cleanValue = value.replace("%", "")
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = cleanValue,
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 14.sp,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = "%",
+                        color = Color.White,
+                        fontSize = 8.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeight = 8.sp,
+                        maxLines = 1
+                    )
+                }
+            } else {
+                Text(
+                    text = value,
                     color = Color.White,
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     softWrap = false
-            )
+                )
+            }
         }
     }
 

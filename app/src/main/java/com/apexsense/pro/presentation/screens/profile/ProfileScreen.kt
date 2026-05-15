@@ -35,6 +35,9 @@ import androidx.compose.material.icons.filled.Smartphone
 import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Adjust
 
+import com.apexsense.pro.presentation.components.CopyrightFooter
+import com.apexsense.pro.presentation.components.PageHeader
+
 @Composable
 fun ProfileScreen() {
     Box(
@@ -47,31 +50,7 @@ fun ProfileScreen() {
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text("Info Sistem", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Black)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Surface(
-                        color = Color.White.copy(alpha = 0.05f),
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Text(
-                            "V1.2.3-12300",
-                            color = Color.Gray,
-                            fontSize = 10.sp,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(Icons.Filled.Settings, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(20.dp))
+            PageHeader(title = "Profile")
             
             val context = LocalContext.current
             val deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}"
@@ -109,7 +88,9 @@ fun ProfileScreen() {
                 )
             }
             
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.weight(1f))
+            CopyrightFooter()
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

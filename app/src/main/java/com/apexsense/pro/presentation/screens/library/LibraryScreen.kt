@@ -37,6 +37,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
+import com.apexsense.pro.presentation.components.CopyrightFooter
+import com.apexsense.pro.presentation.components.PageHeader
 import com.apexsense.pro.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -134,7 +136,6 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = AccentOrange)
                 }
-            } else {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
@@ -145,7 +146,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
-                        Spacer(modifier = Modifier.height(8.dp))
+                        PageHeader(title = "Vault")
                     }
                     items(state.games) { game ->
                         val context = androidx.compose.ui.platform.LocalContext.current
@@ -165,7 +166,10 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                         )
                     }
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
-                        Spacer(modifier = Modifier.height(80.dp))
+                        CopyrightFooter()
+                    }
+                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
             }
