@@ -45,8 +45,14 @@ fun GameToolsScreen(navController: NavController) {
     var height by remember { mutableStateOf(displayMetrics.heightPixels.toString()) }
     var smallestWidth by remember { mutableStateOf(configuration.smallestScreenWidthDp.toString()) }
     
-    var crosshairEnabled by remember { mutableStateOf(false) }
-    var monitorEnabled by remember { mutableStateOf(false) }
+    var crosshairEnabled by remember { mutableStateOf(OverlayService.isCrosshairActive.value) }
+    var monitorEnabled by remember { mutableStateOf(OverlayService.isMonitorActive.value) }
+
+    // Sync with actual service state
+    val crosshairActive by OverlayService.isCrosshairActive.collectAsState()
+    val monitorActive by OverlayService.isMonitorActive.collectAsState()
+    LaunchedEffect(crosshairActive) { crosshairEnabled = crosshairActive }
+    LaunchedEffect(monitorActive) { monitorEnabled = monitorActive }
 
     Box(
         modifier = Modifier
@@ -182,7 +188,6 @@ fun GameToolsScreen(navController: NavController) {
                                 MonitorToggleItem("Battery Information", monitorConfig.showBattery) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
                                 MonitorToggleItem("Temperature Information", monitorConfig.showTemp) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
                                 MonitorToggleItem("FPS Information", monitorConfig.showFps) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
-                                MonitorToggleItem("Time Information", monitorConfig.showTime) { AppMonitorState.update { c: com.apexsense.pro.service.MonitorConfig -> c.copy(showTime = !c.showTime) } }
                             }
                         }
                     }

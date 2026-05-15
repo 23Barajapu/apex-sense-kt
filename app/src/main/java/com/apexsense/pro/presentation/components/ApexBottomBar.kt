@@ -18,11 +18,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.apexsense.pro.presentation.navigation.BottomNavItem
 import com.apexsense.pro.presentation.theme.AccentOrange
 import com.apexsense.pro.presentation.theme.SurfaceGray
+import kotlinx.coroutines.launch
 
 @Composable
-fun ApexBottomBar(navController: NavController) {
+fun ApexBottomBar(
+    navController: NavController,
+    pagerState: androidx.compose.foundation.pager.PagerState
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
     val items = listOf(
         BottomNavItem.Profile,
@@ -54,12 +59,20 @@ fun ApexBottomBar(navController: NavController) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                items.forEach { item ->
-                    val isSelected = currentRoute == item.route
+                items.forEachIndexed { index, item ->
+                    val isSelected = if (currentRoute == com.apexsense.pro.presentation.navigation.Screen.MainContainer.route) {
+                        pagerState.currentPage == index
+                    } else {
+                        currentRoute == item.route
+                    }
                     
                     Surface(
                         onClick = {
-                            if (currentRoute != item.route) {
+                            if (currentRoute == com.apexsense.pro.presentation.navigation.Screen.MainContainer.route) {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(index)
+                                }
+                            } else if (currentRoute != item.route) {
                                 navController.navigate(item.route) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true

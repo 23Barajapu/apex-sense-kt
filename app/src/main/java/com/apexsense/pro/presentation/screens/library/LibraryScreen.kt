@@ -121,21 +121,13 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = DarkBackground)
                 )
             },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { viewModel.toggleAddSheet(true) },
-                    containerColor = AccentOrange,
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = null, tint = Color.White)
-                }
-            },
             containerColor = DarkBackground
         ) { padding ->
             if (state.isLoading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator(color = AccentOrange)
                 }
+            } else {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
@@ -148,6 +140,38 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
                         PageHeader(title = "Vault")
                     }
+
+                    // Tambah Game Card
+                    item {
+                        Card(
+                            onClick = { viewModel.toggleAddSheet(true) },
+                            colors = CardDefaults.cardColors(containerColor = SurfaceGray.copy(alpha = 0.3f)),
+                            shape = RoundedCornerShape(24.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(24.dp))
+                        ) {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(48.dp)
+                                        .background(AccentOrange.copy(alpha = 0.1f), CircleShape)
+                                        .border(1.dp, AccentOrange.copy(alpha = 0.2f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(Icons.Default.Add, contentDescription = null, tint = AccentOrange)
+                                }
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text("TAMBAH GAME", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                            }
+                        }
+                    }
+
                     items(state.games) { game ->
                         val context = androidx.compose.ui.platform.LocalContext.current
                         ModernGameCard(

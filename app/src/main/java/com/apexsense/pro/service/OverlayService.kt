@@ -40,10 +40,20 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import com.apexsense.pro.presentation.theme.AccentOrange
 import androidx.compose.ui.layout.onGloballyPositioned
 
 class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegistryOwner {
+
+    companion object {
+        private val _isCrosshairActive = MutableStateFlow(false)
+        val isCrosshairActive: StateFlow<Boolean> = _isCrosshairActive
+
+        private val _isMonitorActive = MutableStateFlow(false)
+        val isMonitorActive: StateFlow<Boolean> = _isMonitorActive
+    }
 
     private lateinit var windowManager: WindowManager
     private var crosshairView: View? = null
@@ -67,10 +77,10 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
         super.onStartCommand(intent, flags, startId)
         val action = intent?.action
         when (action) {
-            "SHOW_CROSSHAIR" -> showCrosshair()
-            "HIDE_CROSSHAIR" -> hideCrosshair()
-            "SHOW_MONITOR" -> showMonitor()
-            "HIDE_MONITOR" -> hideMonitor()
+            "SHOW_CROSSHAIR" -> { showCrosshair(); _isCrosshairActive.value = true }
+            "HIDE_CROSSHAIR" -> { hideCrosshair(); _isCrosshairActive.value = false }
+            "SHOW_MONITOR" -> { showMonitor(); _isMonitorActive.value = true }
+            "HIDE_MONITOR" -> { hideMonitor(); _isMonitorActive.value = false }
         }
         return START_STICKY
     }
@@ -101,28 +111,20 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                     setContent {
                         ApexSenseTheme {
                             val config by CrosshairState.config.collectAsState()
-                            Log.d(
-                                    "OverlayService",
-                                    "Crosshair Recomposing: rotation=${config.rotation}"
-                            )
-
-                            // Only update window layout if size changed (since we use WRAP_CONTENT,
-                            // the WindowManager needs to know the view might have new bounds)
-                            LaunchedEffect(config.size) {
-                                windowManager.updateViewLayout(this@apply, params)
-                            }
-
+                            
                             Box(
-                                    modifier = Modifier.size((64 * config.size).dp),
-                                    contentAlignment = Alignment.Center
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .graphicsLayer {
+                                        scaleX = config.size
+                                        scaleY = config.size
+                                        rotationZ = config.rotation
+                                        alpha = config.alpha
+                                    },
+                                contentAlignment = Alignment.Center
                             ) {
-                                androidx.compose.foundation.Canvas(
-                                        modifier =
-                                                Modifier.size((32 * config.size).dp).graphicsLayer {
-                                                    rotationZ = config.rotation
-                                                }
-                                ) {
-                                    val color = config.color.copy(alpha = config.alpha)
+                                androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+                                    val drawColor = config.color
                                     val strokeWidth = config.thickness.dp.toPx()
                                     val totalSize = size.width
                                     val center = totalSize / 2
@@ -130,42 +132,42 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                                     
                                     when (config.style) {
                                         "cross" -> {
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center, center - halfLen), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center - halfLen), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
                                         }
                                         "dot" -> {
-                                            drawCircle(color, radius = (totalSize / 6) * config.length)
+                                            drawCircle(drawColor, radius = (totalSize / 8) * config.length)
                                         }
                                         "circle" -> {
-                                            drawCircle(color, radius = halfLen, style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth))
+                                            drawCircle(drawColor, radius = halfLen, style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth))
                                         }
                                         "gap_cross" -> {
-                                            val gap = (totalSize / 4) // Keep gap constant relative to total size
+                                            val gap = (totalSize / 4)
                                             val lineLen = halfLen
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center, center - gap - lineLen), androidx.compose.ui.geometry.Offset(center, center - gap), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center, center + gap), androidx.compose.ui.geometry.Offset(center, center + gap + lineLen), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center - gap - lineLen, center), androidx.compose.ui.geometry.Offset(center - gap, center), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center + gap, center), androidx.compose.ui.geometry.Offset(center + gap + lineLen, center), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center - gap - lineLen), androidx.compose.ui.geometry.Offset(center, center - gap), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center + gap), androidx.compose.ui.geometry.Offset(center, center + gap + lineLen), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - gap - lineLen, center), androidx.compose.ui.geometry.Offset(center - gap, center), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + gap, center), androidx.compose.ui.geometry.Offset(center + gap + lineLen, center), strokeWidth)
                                         }
                                         "square" -> {
                                             drawRect(
-                                                color, 
+                                                drawColor, 
                                                 topLeft = androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen),
                                                 size = androidx.compose.ui.geometry.Size(halfLen * 2, halfLen * 2),
                                                 style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
                                             )
                                         }
                                         "t_shape" -> {
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center, center), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
                                         }
                                         "chevron" -> {
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
                                         }
                                         "x_shape" -> {
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), strokeWidth)
-                                            drawLine(color, androidx.compose.ui.geometry.Offset(center + halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), strokeWidth)
+                                            drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), strokeWidth)
                                         }
                                     }
                                 }
@@ -247,7 +249,8 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                             var ramUsage by remember { mutableIntStateOf(0) }
                             var batteryLevel by remember { mutableIntStateOf(0) }
                             var temperature by remember { mutableDoubleStateOf(0.0) }
-                            var currentTime by remember { mutableStateOf("") }
+                            var fpsRate by remember { mutableIntStateOf(60) }
+
 
                             LaunchedEffect(Unit) {
                                 while (true) {
@@ -259,9 +262,7 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                                             HardwareMonitorUtils.getBatteryTemperature(
                                                     this@apply.context
                                              )
-                                    currentTime =
-                                            SimpleDateFormat("HH:mm", Locale.getDefault())
-                                                    .format(Date())
+                                    fpsRate = HardwareMonitorUtils.getRefreshRate(this@apply.context)
                                     delay(1000)
                                 }
                             }
@@ -271,34 +272,31 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                                 windowManager.updateViewLayout(this@apply, params)
                             }
 
-                            // Stats Pill - Truly Dynamic Wide Layout
+                            // Compact Stats Pill - count active items for divider logic
+                            val activeFlags = listOf(config.showCpu, config.showGpu, config.showRam, config.showTemp, config.showFps, config.showBattery)
+                            val totalActive = activeFlags.count { it }
+
                             Row(
                                 modifier = Modifier
-                                    .onGloballyPositioned { _ ->
-                                        windowManager.updateViewLayout(this@apply, params)
+                                    .onGloballyPositioned { layoutCoordinates ->
+                                        params.width = layoutCoordinates.size.width
+                                        params.height = layoutCoordinates.size.height
+                                        try { windowManager.updateViewLayout(this@apply, params) } catch (_: Exception) {}
                                     }
-                                    .background(Color.Black.copy(alpha = 0.9f), RoundedCornerShape(18.dp))
-                                    .padding(horizontal = 24.dp, vertical = 10.dp),
+                                    .background(Color(0xFF0D0D0D).copy(alpha = 0.75f), RoundedCornerShape(14.dp))
+                                    .border(0.5f.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(40.dp)
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                if (config.showCpu)
-                                    MonitorStatItem("CPU", "$cpuUsage%")
-                                
-                                if (config.showRam)
-                                    MonitorStatItem("RAM", "$ramUsage%")
-                                
-                                if (config.showTemp)
-                                    MonitorStatItem("TMP", "${temperature.toInt()}°C")
-                                
-                                if (config.showFps)
-                                    MonitorStatItem("FPS", "120")
-                                
-                                if (config.showBattery)
-                                    MonitorStatItem("BAT", "$batteryLevel%", isBattery = true)
-                                
-                                if (config.showTime)
-                                    MonitorStatItem("TIME", currentTime)
+                                var shown = 0
+                                if (config.showCpu) { MonitorStatItem(label = "CPU", value = "$cpuUsage%"); shown++; if (shown < totalActive) StatDivider() }
+                                if (config.showGpu) { MonitorStatItem(label = "GPU", value = "27%"); shown++; if (shown < totalActive) StatDivider() }
+                                if (config.showRam) { MonitorStatItem(label = "RAM", value = "$ramUsage%"); shown++; if (shown < totalActive) StatDivider() }
+                                if (config.showTemp) { MonitorStatItem(label = "TMP", value = "${temperature.toInt()}°"); shown++; if (shown < totalActive) StatDivider() }
+                                if (config.showFps) { MonitorStatItem(label = "FPS", value = "$fpsRate"); shown++; if (shown < totalActive) StatDivider() }
+                                if (config.showBattery) { MonitorStatItem(label = "BAT", value = "$batteryLevel%", isBattery = true); shown++; if (shown < totalActive) StatDivider() }
+
                             }
                         }
                     }
@@ -335,58 +333,70 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
         }
     }
 
+    // Unified Stat Item for both overlays
     @Composable
     private fun MonitorStatItem(
-        label: String,
+        label: String? = null,
+        icon: (@Composable () -> Unit)? = null,
         value: String,
         isBattery: Boolean = false
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = label,
-                color = AccentOrange,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Black,
-                letterSpacing = 1.sp,
-                maxLines = 1,
-                softWrap = false
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(3.dp)
+        ) {
+            if (icon != null) {
+                Box(modifier = Modifier.graphicsLayer(alpha = 0.8f)) {
+                    icon()
+                }
+            } else if (!label.isNullOrEmpty()) {
+                Text(
+                    text = label,
+                    color = AccentOrange,
+                    fontSize = 7.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 0.8.sp
+                )
+            }
+
             if (isBattery) {
-                val cleanValue = value.replace("%", "")
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
+                val cleanValue = value.replace("%", "").trim()
+                Row(verticalAlignment = Alignment.Bottom) {
                     Text(
                         text = cleanValue,
                         color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 14.sp,
-                        maxLines = 1
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "%",
-                        color = Color.White,
-                        fontSize = 8.sp,
+                        color = AccentOrange,
+                        fontSize = 7.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = 8.sp,
-                        maxLines = 1
+                        modifier = Modifier.padding(bottom = 1.dp, start = 1.dp)
                     )
                 }
             } else {
                 Text(
                     text = value,
                     color = Color.White,
-                    fontSize = 14.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
                     softWrap = false
                 )
             }
         }
+    }
+
+    @Composable
+    private fun StatDivider() {
+        Box(
+            modifier = Modifier
+                .width(0.5f.dp)
+                .height(10.dp)
+                .background(Color.White.copy(alpha = 0.12f))
+        )
     }
 
     private fun hideMonitor() {

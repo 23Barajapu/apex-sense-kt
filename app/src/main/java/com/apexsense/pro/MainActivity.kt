@@ -41,6 +41,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             ApexSenseTheme {
                 val navController = rememberNavController()
+                val items = listOf(
+                    com.apexsense.pro.presentation.navigation.BottomNavItem.Profile,
+                    com.apexsense.pro.presentation.navigation.BottomNavItem.Home,
+                    com.apexsense.pro.presentation.navigation.BottomNavItem.Tools
+                )
+                val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = 1) { items.size }
                 val snackbarHostState = remember { SnackbarHostState() }
                 val context = LocalContext.current
                 
@@ -80,7 +86,10 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     bottomBar = {
-                        ApexBottomBar(navController = navController)
+                        com.apexsense.pro.presentation.components.ApexBottomBar(
+                            navController = navController,
+                            pagerState = pagerState
+                        )
                     },
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->
@@ -89,13 +98,29 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavHost(
                             navController = navController,
-                            startDestination = Screen.Splash.route
+                            startDestination = Screen.Splash.route,
+                            enterTransition = { androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(400)) + androidx.compose.animation.slideInVertically(initialOffsetY = { -100 }) },
+                            exitTransition = { androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(400)) + androidx.compose.animation.slideOutVertically(targetOffsetY = { 100 }) },
+                            popEnterTransition = { androidx.compose.animation.fadeIn(animationSpec = androidx.compose.animation.core.tween(400)) + androidx.compose.animation.slideInVertically(initialOffsetY = { -100 }) },
+                            popExitTransition = { androidx.compose.animation.fadeOut(animationSpec = androidx.compose.animation.core.tween(400)) + androidx.compose.animation.slideOutVertically(targetOffsetY = { 100 }) }
                         ) {
                             composable(Screen.Splash.route) {
                                 SplashScreen(navController = navController)
                             }
+                            composable(Screen.MainContainer.route) {
+                                com.apexsense.pro.presentation.navigation.MainPagerScreen(
+                                    navController = navController,
+                                    pagerState = pagerState
+                                )
+                            }
                             composable(Screen.Home.route) {
-                                HomeScreen(navController = navController)
+                                // Redirect to MainContainer
+                                LaunchedEffect(Unit) {
+                                    pagerState.scrollToPage(1)
+                                    navController.navigate(Screen.MainContainer.route) {
+                                        popUpTo(Screen.Splash.route) { inclusive = true }
+                                    }
+                                }
                             }
                             composable(
                                 route = Screen.SensitivityResult.route,
@@ -115,10 +140,18 @@ class MainActivity : ComponentActivity() {
                                 HistoryScreen(navController = navController)
                             }
                             composable(Screen.GameTools.route) {
-                                GameToolsScreen(navController = navController)
+                                // Redirect to MainContainer
+                                LaunchedEffect(Unit) {
+                                    pagerState.scrollToPage(2)
+                                    navController.navigate(Screen.MainContainer.route)
+                                }
                             }
                             composable(Screen.Profile.route) {
-                                ProfileScreen()
+                                // Redirect to MainContainer
+                                LaunchedEffect(Unit) {
+                                    pagerState.scrollToPage(0)
+                                    navController.navigate(Screen.MainContainer.route)
+                                }
                             }
                             composable(Screen.SensitivityEngine.route) {
                                 SensitivityEngineScreen(navController = navController)

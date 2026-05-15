@@ -11,7 +11,7 @@ data class CrosshairConfig(
     val color: Color = Color.Red,
     val size: Float = 1.0f,
     val thickness: Float = 2.0f,
-    val length: Float = 1.0f,
+    val length: Float = 0.6f,
     val alpha: Float = 1.0f,
     val rotation: Float = 0f
 )

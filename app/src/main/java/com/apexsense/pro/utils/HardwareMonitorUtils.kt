@@ -68,4 +68,14 @@ object HardwareMonitorUtils {
         val temp = intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0
         return temp / 10.0
     }
+
+    @Suppress("DEPRECATION")
+    fun getRefreshRate(context: Context): Int {
+        return try {
+            val wm = context.getSystemService(Context.WINDOW_SERVICE) as android.view.WindowManager
+            wm.defaultDisplay.refreshRate.toInt()
+        } catch (e: Exception) {
+            60
+        }
+    }
 }

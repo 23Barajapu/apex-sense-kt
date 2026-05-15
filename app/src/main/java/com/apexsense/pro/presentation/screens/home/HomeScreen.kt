@@ -72,6 +72,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
                     ModernActionCard(
                             modifier = Modifier.weight(1f),
                             title = "Game Library",
+                            subtitle = "${state.gameCount} Ditambahkan",
                             icon = Icons.Filled.Games,
                             onClick = { navController.navigate(Screen.GameLibrary.route) }
                     )
@@ -343,7 +344,13 @@ fun SensitivitySearchSection(
 }
 
 @Composable
-fun ModernActionCard(modifier: Modifier, title: String, icon: ImageVector, onClick: () -> Unit) {
+fun ModernActionCard(
+    modifier: Modifier,
+    title: String,
+    subtitle: String? = null,
+    icon: ImageVector,
+    onClick: () -> Unit
+) {
     Card(
             onClick = onClick,
             modifier = modifier.height(120.dp),
@@ -382,7 +389,12 @@ fun ModernActionCard(modifier: Modifier, title: String, icon: ImageVector, onCli
                             modifier = Modifier.size(20.dp)
                     )
                 }
-                Text(title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                Column {
+                    Text(title, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    subtitle?.let {
+                        Text(it, color = AccentOrange, fontSize = 10.sp, fontWeight = FontWeight.Medium)
+                    }
+                }
             }
         }
     }

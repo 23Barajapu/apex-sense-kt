@@ -11,4 +11,5 @@ sealed class Screen(val route: String) {
     object GameTools : Screen("tools")
     object Profile : Screen("profile")
     object SensitivityEngine : Screen("engine")
+    object MainContainer : Screen("main_container")
 }
