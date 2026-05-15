@@ -36,7 +36,7 @@ import androidx.compose.material.icons.filled.Android
 import androidx.compose.material.icons.filled.Adjust
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ProfileScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,42 +47,6 @@ fun ProfileScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
-            
-            // Profile Header
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .background(SurfaceGray, CircleShape)
-                        .border(2.dp, AccentOrange, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Filled.Person, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(40.dp))
-                }
-                Spacer(modifier = Modifier.width(20.dp))
-                Column {
-                    Text("APEX USER", color = Color.White, fontSize = 20.sp, fontWeight = FontWeight.Black)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            Text("ACCOUNT SETTINGS", color = Color.Gray, fontSize = 12.sp, fontWeight = FontWeight.Bold, letterSpacing = 2.sp)
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ProfileMenuItem(
-                title = "Performance History",
-                icon = Icons.Filled.History,
-                onClick = { navController.navigate(Screen.HardwareHistory.route) }
-            )
-            ProfileMenuItem(
-                title = "Device Calibration",
-                icon = Icons.Filled.Settings,
-                onClick = { /* Navigate to Calibration */ }
-            )
-            
-            // Info Sistem Section
             Spacer(modifier = Modifier.height(40.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),

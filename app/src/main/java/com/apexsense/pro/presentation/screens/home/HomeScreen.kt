@@ -165,13 +165,6 @@ fun HeaderSection() {
                 fontWeight = FontWeight.Black,
                 letterSpacing = 1.sp
             )
-            Text(
-                text = "PRO",
-                color = AccentOrange,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Black,
-                modifier = Modifier.padding(start = 4.dp)
-            )
         }
         Text(
             text = "OPTIMIZED FOR PERFORMANCE",

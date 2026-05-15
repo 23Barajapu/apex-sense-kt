@@ -1,7 +1,6 @@
 package com.apexsense.pro.presentation.screens.tools
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,13 +31,18 @@ import com.apexsense.pro.service.MonitorConfig
 import com.apexsense.pro.service.OverlayService
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun GameToolsScreen(navController: NavController) {
     val context = LocalContext.current
-    var width by remember { mutableStateOf("1080") }
-    var height by remember { mutableStateOf("2436") }
-    var smallestWidth by remember { mutableStateOf("432") }
+    val displayMetrics = context.resources.displayMetrics
+    val configuration = context.resources.configuration
+    
+    var width by remember { mutableStateOf(displayMetrics.widthPixels.toString()) }
+    var height by remember { mutableStateOf(displayMetrics.heightPixels.toString()) }
+    var smallestWidth by remember { mutableStateOf(configuration.smallestScreenWidthDp.toString()) }
     
     var crosshairEnabled by remember { mutableStateOf(false) }
     var monitorEnabled by remember { mutableStateOf(false) }
@@ -58,16 +62,26 @@ fun GameToolsScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(40.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        "Game Tools",
-                        color = Color.White,
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Black
+                    val logoId = remember(context) {
+                        context.resources.getIdentifier("app_logo", "drawable", context.packageName)
+                    }
+                    Image(
+                        painter = painterResource(id = if (logoId != 0) logoId else android.R.drawable.ic_menu_gallery),
+                        contentDescription = "App Logo",
+                        modifier = Modifier
+                            .size(54.dp)
+                            .clip(RoundedCornerShape(16.dp))
                     )
-                    Column(horizontalAlignment = Alignment.End) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            "Game Tools",
+                            color = Color.White,
+                            fontSize = 32.sp,
+                            fontWeight = FontWeight.Black
+                        )
                         Text("By B Word", color = Color.Gray, fontSize = 12.sp)
                     }
                 }
@@ -301,48 +315,150 @@ fun CrosshairConfigArea() {
         shape = RoundedCornerShape(24.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                // Left Styles
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    CrosshairStyleIcon(Icons.Filled.Add, config.style == Icons.Filled.Add) { CrosshairState.update { it.copy(style = Icons.Filled.Add) } }
-                    CrosshairStyleIcon(Icons.Filled.FilterCenterFocus, config.style == Icons.Filled.FilterCenterFocus) { CrosshairState.update { it.copy(style = Icons.Filled.FilterCenterFocus) } }
-                    CrosshairStyleIcon(Icons.Filled.HorizontalRule, config.style == Icons.Filled.HorizontalRule) { CrosshairState.update { it.copy(style = Icons.Filled.HorizontalRule) } }
-                    CrosshairStyleIcon(Icons.Filled.Circle, config.style == Icons.Filled.Circle) { CrosshairState.update { it.copy(style = Icons.Filled.Circle) } }
-                    CrosshairStyleIcon(Icons.Filled.Adjust, config.style == Icons.Filled.Adjust) { CrosshairState.update { it.copy(style = Icons.Filled.Adjust) } }
+            // Header with Reset Button
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Customization", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                TextButton(
+                    onClick = { CrosshairState.update { com.apexsense.pro.service.CrosshairConfig() } },
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
+                ) {
+                    Icon(Icons.Default.Refresh, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(14.dp))
+                    Spacer(Modifier.width(4.dp))
+                    Text("Reset", color = AccentOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+
+            val previewHeight = 220.dp
+            Row(
+                modifier = Modifier.fillMaxWidth().height(previewHeight),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Left Styles - Scrollable
+                Box(modifier = Modifier.width(50.dp).fillMaxHeight()) {
+                    val scrollState = rememberScrollState()
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(scrollState)
+                            .padding(vertical = 4.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CrosshairState.availableStyles.forEach { styleId ->
+                            CrosshairStyleButton(
+                                styleId = styleId, 
+                                isSelected = config.style == styleId,
+                                color = config.color
+                            ) { 
+                                CrosshairState.update { it.copy(style = styleId) } 
+                            }
+                        }
+                    }
                 }
 
-                // Center Positioner
-                Box(modifier = Modifier.size(200.dp), contentAlignment = Alignment.Center) {
-                    // Joystick Outer Ring
-                    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+                // Center Preview Area
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .background(Color.White.copy(alpha = 0.02f), RoundedCornerShape(16.dp))
+                        .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Outer Ring
+                    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize().padding(10.dp)) {
                         drawCircle(
                             color = Color.White.copy(alpha = 0.05f),
-                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.dp.toPx())
                         )
                     }
                     
-                    // Coordinates Label
-                    Text("X: 0\nY: 0", color = Color.Gray, fontSize = 10.sp, modifier = Modifier.align(Alignment.TopStart).padding(8.dp))
-                }
-
-                // Right Size Slider
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Size", color = Color.Gray, fontSize = 10.sp)
-                    Text("${String.format("%.1fx", config.size)}", color = Color.White, fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Box(modifier = Modifier.height(200.dp).width(40.dp)) {
-                        Slider(
-                            value = config.size,
-                            onValueChange = { newSize -> CrosshairState.update { it.copy(size = newSize) } },
-                            valueRange = 0.5f..2.5f,
-                            modifier = Modifier.align(Alignment.Center).rotate(-90f).width(200.dp),
-                            colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
-                        )
+                    // Actual Crosshair Preview
+                    androidx.compose.foundation.Canvas(
+                        modifier = Modifier.size(48.dp).graphicsLayer { rotationZ = config.rotation }
+                    ) {
+                        val drawColor = config.color.copy(alpha = config.alpha)
+                        val strokeWidth = config.thickness.dp.toPx()
+                        val totalSize = size.width
+                        val center = totalSize / 2
+                        val halfLen = (totalSize / 2) * config.length
+                        
+                        when (config.style) {
+                            "cross" -> {
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center - halfLen), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
+                            }
+                            "dot" -> {
+                                drawCircle(drawColor, radius = (totalSize / 6) * config.length)
+                            }
+                            "circle" -> {
+                                drawCircle(drawColor, radius = halfLen, style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth))
+                            }
+                            "gap_cross" -> {
+                                val gap = (totalSize / 4)
+                                val lineLen = halfLen
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center - gap - lineLen), androidx.compose.ui.geometry.Offset(center, center - gap), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center + gap), androidx.compose.ui.geometry.Offset(center, center + gap + lineLen), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - gap - lineLen, center), androidx.compose.ui.geometry.Offset(center - gap, center), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + gap, center), androidx.compose.ui.geometry.Offset(center + gap + lineLen, center), strokeWidth)
+                            }
+                            "square" -> {
+                                drawRect(
+                                    drawColor, 
+                                    topLeft = androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen),
+                                    size = androidx.compose.ui.geometry.Size(halfLen * 2, halfLen * 2),
+                                    style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
+                                )
+                            }
+                            "t_shape" -> {
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
+                            }
+                            "chevron" -> {
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
+                            }
+                            "x_shape" -> {
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), strokeWidth)
+                                drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), strokeWidth)
+                            }
+                        }
                     }
+
+                    // Joystick Handle representation
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(12.dp)
+                            .size(12.dp)
+                            .background(AccentOrange, androidx.compose.foundation.shape.CircleShape)
+                    )
+
+                    // Coordinates Label
+                    Text(
+                        "X: 0, Y: 0", 
+                        color = Color.Gray, 
+                        fontSize = 9.sp, 
+                        modifier = Modifier.align(Alignment.TopStart).padding(10.dp)
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            // Size Slider
+            Column {
+                Text("Size ${ String.format("%.1fx", config.size) }", color = Color.Gray, fontSize = 10.sp)
+                Slider(
+                    value = config.size,
+                    onValueChange = { newSize -> CrosshairState.update { it.copy(size = newSize) } },
+                    valueRange = 0.5f..2.5f,
+                    colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
+                )
+            }
 
             // Alpha Slider
             Column {
@@ -354,45 +470,15 @@ fun CrosshairConfigArea() {
                 )
             }
 
-            // Rotation Controls
+            // Rotation Slider
             Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Rotation ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        SmallStepButton(Icons.Default.Remove) { 
-                            CrosshairState.update { it.copy(rotation = (it.rotation - 1f).let { r -> if (r < 0) r + 360 else r }) } 
-                        }
-                        SmallStepButton(Icons.Default.Add) { 
-                            CrosshairState.update { it.copy(rotation = (it.rotation + 1f) % 360) } 
-                        }
-                    }
-                }
+                Text("Rotation ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.rotation,
                     onValueChange = { newRot -> CrosshairState.update { it.copy(rotation = newRot) } },
                     valueRange = 0f..360f,
                     colors = SliderDefaults.colors(thumbColor = AccentOrange, activeTrackColor = AccentOrange)
                 )
-                
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val presets = listOf(0f, 45f, 90f, 135f, 180f)
-                    presets.forEach { angle ->
-                        AngleChip(
-                            label = "${angle.toInt()}°",
-                            isSelected = config.rotation == angle,
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            CrosshairState.update { it.copy(rotation = angle) }
-                        }
-                    }
-                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -415,7 +501,7 @@ fun CrosshairConfigArea() {
 }
 
 @Composable
-fun CrosshairStyleIcon(icon: ImageVector, isSelected: Boolean, onClick: () -> Unit) {
+fun CrosshairStyleButton(styleId: String, isSelected: Boolean, color: Color, onClick: () -> Unit) {
     IconButton(
         onClick = onClick,
         modifier = Modifier
@@ -424,9 +510,57 @@ fun CrosshairStyleIcon(icon: ImageVector, isSelected: Boolean, onClick: () -> Un
                 if (isSelected) AccentOrange.copy(alpha = 0.1f) else Color.White.copy(alpha = 0.03f),
                 RoundedCornerShape(12.dp)
             )
-            .border(1.dp, if (isSelected) AccentOrange else Color.Transparent, RoundedCornerShape(12.dp))
+            .border(1.dp, if (isSelected) color else Color.Transparent, RoundedCornerShape(12.dp))
     ) {
-        Icon(icon, contentDescription = null, tint = if (isSelected) AccentOrange else Color.Gray, modifier = Modifier.size(20.dp))
+        androidx.compose.foundation.Canvas(modifier = Modifier.size(20.dp)) {
+            val drawColor = if (isSelected) color else Color.Gray
+            val config = CrosshairState.config.value
+            val strokeWidth = (config.thickness * 0.5f).dp.toPx() // Scaled down for preview
+            val totalSize = size.width
+            val center = totalSize / 2
+            val halfLen = (totalSize / 2) * config.length
+            
+            when (styleId) {
+                "cross" -> {
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center - halfLen), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
+                }
+                "dot" -> {
+                    drawCircle(drawColor, radius = (totalSize / 6) * config.length)
+                }
+                "circle" -> {
+                    drawCircle(drawColor, radius = halfLen, style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth))
+                }
+                "gap_cross" -> {
+                    val gap = (totalSize / 4)
+                    val lineLen = halfLen * 0.8f
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center - gap - lineLen), androidx.compose.ui.geometry.Offset(center, center - gap), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center + gap), androidx.compose.ui.geometry.Offset(center, center + gap + lineLen), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - gap - lineLen, center), androidx.compose.ui.geometry.Offset(center - gap, center), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + gap, center), androidx.compose.ui.geometry.Offset(center + gap + lineLen, center), strokeWidth)
+                }
+                "square" -> {
+                    drawRect(
+                        drawColor, 
+                        topLeft = androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen),
+                        size = androidx.compose.ui.geometry.Size(halfLen * 2, halfLen * 2),
+                        style = androidx.compose.ui.graphics.drawscope.Stroke(strokeWidth)
+                    )
+                }
+                "t_shape" -> {
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center, center), androidx.compose.ui.geometry.Offset(center, center + halfLen), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center), androidx.compose.ui.geometry.Offset(center + halfLen, center), strokeWidth)
+                }
+                "chevron" -> {
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), androidx.compose.ui.geometry.Offset(center, center), strokeWidth)
+                }
+                "x_shape" -> {
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center - halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center + halfLen, center + halfLen), strokeWidth)
+                    drawLine(drawColor, androidx.compose.ui.geometry.Offset(center + halfLen, center - halfLen), androidx.compose.ui.geometry.Offset(center - halfLen, center + halfLen), strokeWidth)
+                }
+            }
+        }
     }
 }
 

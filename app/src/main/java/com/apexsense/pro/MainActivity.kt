@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         title = { Text("Permission Required", color = Color.White, fontWeight = FontWeight.Bold) },
                         text = { 
                             Text(
-                                "ApexSense Pro needs 'Display Over Other Apps' permission to show the gaming crosshair and performance monitor while you are playing.",
+                                "ApexSense needs 'Display Over Other Apps' permission to show the gaming crosshair and performance monitor while you are playing.",
                                 color = Color.Gray
                             ) 
                         },
@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
                                 GameToolsScreen(navController = navController)
                             }
                             composable(Screen.Profile.route) {
-                                ProfileScreen(navController = navController)
+                                ProfileScreen()
                             }
                             composable(Screen.SensitivityEngine.route) {
                                 SensitivityEngineScreen(navController = navController)

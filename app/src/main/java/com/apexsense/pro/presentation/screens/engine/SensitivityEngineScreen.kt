@@ -22,9 +22,12 @@ import com.apexsense.pro.presentation.theme.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SensitivityEngineScreen(navController: NavController) {
-    var width by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var dpi by remember { mutableStateOf("") }
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val displayMetrics = context.resources.displayMetrics
+    
+    var width by remember { mutableStateOf(displayMetrics.widthPixels.toString()) }
+    var height by remember { mutableStateOf(displayMetrics.heightPixels.toString()) }
+    var dpi by remember { mutableStateOf(displayMetrics.densityDpi.toString()) }
 
     Scaffold(
         topBar = {

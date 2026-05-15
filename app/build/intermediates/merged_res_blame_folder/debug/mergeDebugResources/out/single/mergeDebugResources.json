@@ -8,6 +8,10 @@
         "source": "com.apexsense.pro.app-main-76:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
+        "merged": "com.apexsense.pro.app-debug-74:/drawable_app_logo.jpg.flat",
+        "source": "com.apexsense.pro.app-main-76:/drawable/app_logo.jpg"
+    },
+    {
         "merged": "com.apexsense.pro.app-debug-74:/drawable_ic_launcher_foreground.xml.flat",
         "source": "com.apexsense.pro.app-main-76:/drawable/ic_launcher_foreground.xml"
     },
