@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="app/src/main/res/drawable/app_logo.jpeg" width="120" style="border-radius: 24px" />
+  <img src="app/src/main/res/drawable/app_logo.jpg" width="140" style="border-radius: 28px" />
 </p>
 
 <h1 align="center">ApexSense</h1>
