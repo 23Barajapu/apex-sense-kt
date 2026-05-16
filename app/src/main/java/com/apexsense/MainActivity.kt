@@ -72,51 +72,64 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (showPermissionDialog) {
-                    // Check permissions inside the composition to ensure they update on recomposition
                     val needsOverlay = !Settings.canDrawOverlays(context)
                     val needsWriteSettings = !android.provider.Settings.System.canWrite(context)
 
-                    if (needsOverlay || needsWriteSettings) {
+                    if (needsOverlay) {
+                        // LAYER 1: OVERLAY
                         AlertDialog(
-                            onDismissRequest = { /* Don't dismiss without action */ },
+                            onDismissRequest = { /* Don't dismiss */ },
                             containerColor = Color(0xFF1A1614),
-                            title = { Text("Izin Diperlukan", color = Color.White, fontWeight = FontWeight.Bold) },
+                            title = { Text("Izin Tahap 1: Overlay", color = Color.White, fontWeight = FontWeight.Bold) },
                             text = { 
-                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text(
-                                        "ApexSense memerlukan izin berikut agar dapat berfungsi dengan baik:",
-                                        color = Color.White,
-                                        fontSize = 14.sp
-                                    )
-                                    if (needsOverlay) {
-                                        Text("• Tampilkan di Atas Aplikasi Lain (Untuk Crosshair & Monitor)", color = Color.Gray, fontSize = 13.sp)
-                                    }
-                                    if (needsWriteSettings) {
-                                        Text("• Ubah Setelan Sistem (Untuk Pengubah Resolusi)", color = Color.Gray, fontSize = 13.sp)
-                                    }
-                                }
+                                Text(
+                                    "ApexSense perlu izin 'Tampilkan di Atas Aplikasi Lain' agar Crosshair dan Monitor bisa muncul saat kamu bermain game.",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
                             },
                             confirmButton = {
                                 Button(
                                     onClick = {
-                                        if (needsOverlay) {
-                                            val intent = Intent(
-                                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                                Uri.parse("package:${context.packageName}")
-                                            )
-                                            context.startActivity(intent)
-                                        } else if (needsWriteSettings) {
-                                            val intent = Intent(
-                                                Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                                                Uri.parse("package:${context.packageName}")
-                                            )
-                                            context.startActivity(intent)
-                                        }
+                                        val intent = Intent(
+                                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                            Uri.parse("package:${context.packageName}")
+                                        )
+                                        context.startActivity(intent)
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
-                                    Text(if (needsOverlay) "BERIKAN IZIN OVERLAY" else "BERIKAN IZIN SISTEM", fontWeight = FontWeight.Bold)
+                                    Text("AKTIFKAN OVERLAY", fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        )
+                    } else if (needsWriteSettings) {
+                        // LAYER 2: SYSTEM SETTINGS
+                        AlertDialog(
+                            onDismissRequest = { /* Don't dismiss */ },
+                            containerColor = Color(0xFF1A1614),
+                            title = { Text("Izin Tahap 2: Sistem", color = Color.White, fontWeight = FontWeight.Bold) },
+                            text = { 
+                                Text(
+                                    "ApexSense perlu izin 'Ubah Setelan Sistem' agar fitur Pengubah Resolusi (DPI) bisa bekerja.",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                            },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        val intent = Intent(
+                                            Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                                            Uri.parse("package:${context.packageName}")
+                                        )
+                                        context.startActivity(intent)
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text("AKTIFKAN IZIN SISTEM", fontWeight = FontWeight.Bold)
                                 }
                             }
                         )
