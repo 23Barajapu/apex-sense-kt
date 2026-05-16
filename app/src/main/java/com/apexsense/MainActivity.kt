@@ -36,6 +36,10 @@ import com.apexsense.presentation.screens.result.ResultScreen
 import com.apexsense.presentation.screens.splash.SplashScreen
 import com.apexsense.presentation.screens.tools.GameToolsScreen
 import com.apexsense.presentation.theme.ApexSenseTheme
+import io.ktor.client.request.get
+import io.ktor.client.call.body
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +97,66 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (showPermissionDialog) {
+                var showUpdateDialog by remember { mutableStateOf(false) }
+                var updateUrl by remember { mutableStateOf("") }
+                
+                // --- VERSION CHECK LOGIC ---
+                LaunchedEffect(Unit) {
+                    try {
+                        val client = io.ktor.client.HttpClient(io.ktor.client.engine.android.Android) {
+                            install(ContentNegotiation) {
+                                json(kotlinx.serialization.json.Json {
+                                    ignoreUnknownKeys = true
+                                })
+                            }
+                        }
+                        
+                        // Mengecek versi terbaru dari repositori kamu
+                        val remoteInfo: Map<String, kotlinx.serialization.json.JsonElement> = 
+                            client.get("https://raw.githubusercontent.com/23Barajapu/apex-sense-kt/main/update.json").body()
+                        
+                        val latestCode = remoteInfo["latest_version_code"]?.toString()?.toIntOrNull() ?: 1
+                        val downloadLink = remoteInfo["update_url"]?.toString()?.replace("\"", "") ?: ""
+                        
+                        if (latestCode > 1) { // 1 adalah versionCode saat ini di build.gradle.kts
+                            updateUrl = downloadLink
+                            showUpdateDialog = true
+                        }
+                        client.close()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+
+                if (showUpdateDialog) {
+                    AlertDialog(
+                        onDismissRequest = { /* Force update - cannot dismiss */ },
+                        containerColor = Color(0xFF1A1614),
+                        title = { Text("Update Versi Baru!", color = Color.White, fontWeight = FontWeight.Bold) },
+                        text = { 
+                            Text(
+                                "Versi terbaru ApexSense sudah tersedia. Kamu harus melakukan update untuk terus menggunakan aplikasi ini.",
+                                color = Color.White,
+                                fontSize = 14.sp
+                            )
+                        },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl))
+                                    context.startActivity(intent)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text("DOWNLOAD SEKARANG", fontWeight = FontWeight.Bold)
+                            }
+                        }
+                    )
+                }
+
+                if (showPermissionDialog && !showUpdateDialog) {
                     // Force re-evaluation by reading permissionTick
                     if (permissionTick >= 0) { } 
                     
