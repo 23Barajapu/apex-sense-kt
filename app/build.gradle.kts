@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.apexsense.pro"
+    namespace = "com.apexsense"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.apexsense.pro"
+        applicationId = "com.apexsense"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
