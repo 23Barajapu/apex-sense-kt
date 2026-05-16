@@ -12,4 +12,5 @@ sealed class Screen(val route: String) {
     object Profile : Screen("profile")
     object SensitivityEngine : Screen("engine")
     object MainContainer : Screen("main_container")
+    object DevOptionsGuide : Screen("dev_options_guide")
 }

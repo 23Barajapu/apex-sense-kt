@@ -23,6 +23,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.apexsense.pro.presentation.components.ApexBottomBar
 import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.screens.engine.SensitivityEngineScreen
@@ -52,34 +54,70 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 
                 var showPermissionDialog by remember { 
-                    mutableStateOf(!Settings.canDrawOverlays(context)) 
+                    mutableStateOf(!Settings.canDrawOverlays(context) || !android.provider.Settings.System.canWrite(context)) 
+                }
+
+                // Add Lifecycle observer to refresh permission status when returning to app
+                val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+                DisposableEffect(lifecycleOwner) {
+                    val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+                        if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                            showPermissionDialog = !Settings.canDrawOverlays(context) || !android.provider.Settings.System.canWrite(context)
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
                 }
 
                 if (showPermissionDialog) {
+                    val needsOverlay = !Settings.canDrawOverlays(context)
+                    val needsWriteSettings = !android.provider.Settings.System.canWrite(context)
+
                     AlertDialog(
                         onDismissRequest = { /* Don't dismiss without action */ },
                         containerColor = Color(0xFF1A1614),
                         title = { Text("Permission Required", color = Color.White, fontWeight = FontWeight.Bold) },
                         text = { 
-                            Text(
-                                "ApexSense needs 'Display Over Other Apps' permission to show the gaming crosshair and performance monitor while you are playing.",
-                                color = Color.Gray
-                            ) 
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    "ApexSense needs these permissions to function properly:",
+                                    color = Color.White,
+                                    fontSize = 14.sp
+                                )
+                                if (needsOverlay) {
+                                    Text("• Display Over Other Apps (For Crosshair & Monitor)", color = Color.Gray, fontSize = 13.sp)
+                                }
+                                if (needsWriteSettings) {
+                                    Text("• Modify System Settings (For Resolution Changer)", color = Color.Gray, fontSize = 13.sp)
+                                }
+                            }
                         },
                         confirmButton = {
                             Button(
                                 onClick = {
-                                    val intent = Intent(
-                                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                        Uri.parse("package:${context.packageName}")
-                                    )
-                                    context.startActivity(intent)
-                                    showPermissionDialog = false
+                                    if (needsOverlay) {
+                                        val intent = Intent(
+                                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                            Uri.parse("package:${context.packageName}")
+                                        )
+                                        context.startActivity(intent)
+                                    } else if (needsWriteSettings) {
+                                        val intent = Intent(
+                                            Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                                            Uri.parse("package:${context.packageName}")
+                                        )
+                                        context.startActivity(intent)
+                                    }
+                                    
+                                    // Re-check after returning (the dialog will re-evaluate on next recomposition if app resumed)
+                                    showPermissionDialog = !Settings.canDrawOverlays(context) || !android.provider.Settings.System.canWrite(context)
                                 },
                                 colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.pro.presentation.theme.AccentOrange),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
-                                Text("GRANT PERMISSION", fontWeight = FontWeight.Bold)
+                                Text(if (needsOverlay) "GRANT OVERLAY" else "GRANT WRITE SETTINGS", fontWeight = FontWeight.Bold)
                             }
                         }
                     )
@@ -169,6 +207,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(Screen.SensitivityEngine.route) {
                                 SensitivityEngineScreen(navController = navController)
+                            }
+                            composable(Screen.DevOptionsGuide.route) {
+                                com.apexsense.pro.presentation.screens.tools.DevOptionsGuideScreen(navController = navController)
                             }
                         }
                     }

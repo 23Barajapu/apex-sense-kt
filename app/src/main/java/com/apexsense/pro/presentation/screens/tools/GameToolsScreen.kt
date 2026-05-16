@@ -93,7 +93,33 @@ fun GameToolsScreen(navController: NavController) {
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    AppliedButton()
+                    Button(
+                        onClick = {
+                            val w = width.toIntOrNull() ?: displayMetrics.widthPixels
+                            val h = height.toIntOrNull() ?: displayMetrics.heightPixels
+                            
+                            try {
+                                // Attempting direct resolution change (Requires WRITE_SECURE_SETTINGS)
+                                android.provider.Settings.Secure.putString(
+                                    context.contentResolver,
+                                    "display_size_forced",
+                                    "${w}x${h}"
+                                )
+                                android.widget.Toast.makeText(context, "Resolusi diubah ke ${w}x${h}", android.widget.Toast.LENGTH_SHORT).show()
+                            } catch (e: SecurityException) {
+                                navController.navigate(Screen.DevOptionsGuide.route)
+                                android.widget.Toast.makeText(context, "Butuh izin tambahan untuk ubah resolusi!", android.widget.Toast.LENGTH_LONG).show()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                android.widget.Toast.makeText(context, "Gagal: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("Terapkan Sekarang", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 
@@ -112,16 +138,50 @@ fun GameToolsScreen(navController: NavController) {
                     ) {
                         Icon(Icons.Filled.Texture, contentDescription = null, tint = Color.Gray)
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            smallestWidth,
-                            color = Color.White,
-                            modifier = Modifier.weight(1f),
-                            fontSize = 18.sp
+                        BasicTextField(
+                            value = smallestWidth,
+                            onValueChange = { smallestWidth = it },
+                            textStyle = androidx.compose.ui.text.TextStyle(
+                                color = Color.White,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            modifier = Modifier.weight(1f)
                         )
                         Text("dp", color = Color.Gray)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    AppliedButton()
+                    Button(
+                        onClick = {
+                            val dpValue = smallestWidth.toIntOrNull() ?: 360
+                            val widthPixels = displayMetrics.widthPixels
+                            
+                            // Calculate required density: (Pixels / DP) * 160
+                            val newDensity = (widthPixels.toFloat() / dpValue.toFloat() * 160f).toInt()
+
+                            try {
+                                // Attempting direct change (Requires WRITE_SECURE_SETTINGS permission)
+                                android.provider.Settings.Secure.putInt(
+                                    context.contentResolver,
+                                    "display_density_forced",
+                                    newDensity
+                                )
+                                android.widget.Toast.makeText(context, "Berhasil! Lebar Terkecil menjadi $dpValue dp", android.widget.Toast.LENGTH_SHORT).show()
+                            } catch (e: SecurityException) {
+                                // If permission is missing, show the guide
+                                navController.navigate(Screen.DevOptionsGuide.route)
+                                android.widget.Toast.makeText(context, "Butuh izin tambahan! Ikuti panduan di sini.", android.widget.Toast.LENGTH_LONG).show()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                android.widget.Toast.makeText(context, "Gagal: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text("Terapkan Sekarang", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
 

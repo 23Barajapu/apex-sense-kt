@@ -2,21 +2,20 @@ package com.apexsense.pro.presentation.screens.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,18 +25,10 @@ import android.content.Context
 import android.os.Build
 import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.theme.*
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material.icons.filled.Bolt
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Smartphone
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Adjust
-
 import com.apexsense.pro.presentation.components.CopyrightFooter
 import com.apexsense.pro.presentation.components.PageHeader
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
     Box(
@@ -57,6 +48,128 @@ fun ProfileScreen() {
             val androidVer = "${Build.VERSION.RELEASE} (SDK ${Build.VERSION.SDK_INT})"
             val abi = Build.SUPPORTED_ABIS.firstOrNull() ?: "unknown"
             val totalRam = getDeviceInfoRam(context)
+
+            var showLanguageSheet by remember { mutableStateOf(false) }
+            var selectedLanguage by remember { mutableStateOf("Default Sistem") }
+            var searchQuery by remember { mutableStateOf("") }
+
+            // Language Bottom Sheet
+            if (showLanguageSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showLanguageSheet = false },
+                    containerColor = Color(0xFF1A1614),
+                    dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray.copy(alpha = 0.3f)) }
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp)
+                            .padding(bottom = 32.dp)
+                    ) {
+                        Text(
+                            "Bahasa",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        
+                        // Search Box
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text("Cari bahasa", color = Color.Gray) },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color.Gray,
+                                unfocusedBorderColor = Color.Gray.copy(alpha = 0.3f),
+                                focusedTextColor = Color.White,
+                                unfocusedTextColor = Color.White
+                            )
+                        )
+                        
+                        Text(
+                            "Viralkan Game Corner ini dinegaramu jika tidak ada bahasamu disini",
+                            color = AccentOrange,
+                            fontSize = 11.sp,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
+                        )
+
+                        val languages = listOf("Default Sistem", "English", "Indonesia")
+                        languages.filter { lang -> lang.lowercase().contains(searchQuery.lowercase()) }.forEach { lang ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { 
+                                        selectedLanguage = lang
+                                        showLanguageSheet = false 
+                                    }
+                                    .padding(vertical = 16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(lang, color = Color.White, fontSize = 16.sp)
+                                RadioButton(
+                                    selected = selectedLanguage == lang,
+                                    onClick = { 
+                                        selectedLanguage = lang
+                                        showLanguageSheet = false 
+                                    },
+                                    colors = RadioButtonDefaults.colors(selectedColor = AccentOrange, unselectedColor = Color.Gray)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Info Sistem Header
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Info Sistem",
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Version Pill
+                    Surface(
+                        color = Color.White.copy(alpha = 0.05f),
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Text(
+                            "V1.2.4-12400",
+                            color = Color.Gray,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    
+                    // Gear Icon
+                    IconButton(
+                        onClick = { showLanguageSheet = true },
+                        modifier = Modifier
+                            .size(36.dp)
+                            .background(Color.White.copy(alpha = 0.05f), CircleShape)
+                    ) {
+                        Icon(
+                            Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 SystemInfoCard(
