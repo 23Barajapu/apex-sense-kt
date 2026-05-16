@@ -14,11 +14,11 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/app_logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ApexSensePro">
+        android:theme="@style/Theme.ApexSense">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ApexSensePro">
+            android:theme="@style/Theme.ApexSense">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
