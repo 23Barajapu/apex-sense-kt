@@ -41,8 +41,20 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.statement.bodyAsText
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 import androidx.appcompat.app.AppCompatActivity
+
+@kotlinx.serialization.Serializable
+data class UpdateInfo(
+    val latest_version_code: Int,
+    val latest_version_name: String,
+    val update_url: String,
+    val force_update: Boolean,
+    val changelog: String
+)
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,31 +116,18 @@ class MainActivity : AppCompatActivity() {
                 var updateUrl by remember { mutableStateOf("") }
                 
                 // --- VERSION CHECK LOGIC ---
-                @kotlinx.serialization.Serializable
-                data class UpdateInfo(
-                    val latest_version_code: Int,
-                    val latest_version_name: String,
-                    val update_url: String,
-                    val force_update: Boolean,
-                    val changelog: String
-                )
-
                 LaunchedEffect(Unit) {
                     try {
-                        val client = io.ktor.client.HttpClient(io.ktor.client.engine.okhttp.OkHttp) {
-                            install(ContentNegotiation) {
-                                json(kotlinx.serialization.json.Json {
-                                    ignoreUnknownKeys = true
-                                    coerceInputValues = true
-                                })
-                            }
-                        }
+                        val client = io.ktor.client.HttpClient(io.ktor.client.engine.okhttp.OkHttp)
                         
-                        val remoteInfo: UpdateInfo = client.get("https://raw.githubusercontent.com/23Barajapu/apex-sense-kt/main/update.json").body()
+                        // Ambil teks mentah dari GitHub
+                        val jsonString: String = client.get("https://raw.githubusercontent.com/23Barajapu/apex-sense-kt/main/update.json").bodyAsText()
                         
-                        // DEBUG TOAST
-                        android.widget.Toast.makeText(context, "Versi Server: ${remoteInfo.latest_version_code}", android.widget.Toast.LENGTH_LONG).show()
-
+                        // Terjemahkan teks menjadi data UpdateInfo
+                        val remoteInfo = kotlinx.serialization.json.Json { 
+                            ignoreUnknownKeys = true 
+                        }.decodeFromString<UpdateInfo>(jsonString)
+                        
                         if (remoteInfo.latest_version_code > 2) { 
                             updateUrl = remoteInfo.update_url
                             showUpdateDialog = true

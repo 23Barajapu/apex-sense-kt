@@ -66,6 +66,6 @@ Beberapa fitur tingkat lanjut mungkin memerlukan langkah tambahan melalui *Devel
 ---
 
 <p align="center">
-  <b>Dikembangkan dengan 🔥 oleh Bara444</b><br/>
+  <b>Dikembangkan oleh Bara444</b><br/>
   <sub>Kualitas • Presisi • Performa</sub>
 </p>
