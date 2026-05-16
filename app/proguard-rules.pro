@@ -13,3 +13,12 @@
 -keepattributes *Annotation*
 -keep class com.apexsense.domain.model.** { *; }
 -keep class kotlinx.serialization.json.** { *; }
+
+# Ignore SLF4J missing classes
+-dontwarn org.slf4j.**
+
+# Ignore other common library warnings
+-dontwarn io.ktor.**
+-dontwarn kotlinx.serialization.**
+-ignorewarnings
+
