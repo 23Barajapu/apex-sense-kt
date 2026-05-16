@@ -72,55 +72,57 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (showPermissionDialog) {
+                    // Check permissions inside the composition to ensure they update on recomposition
                     val needsOverlay = !Settings.canDrawOverlays(context)
                     val needsWriteSettings = !android.provider.Settings.System.canWrite(context)
 
-                    AlertDialog(
-                        onDismissRequest = { /* Don't dismiss without action */ },
-                        containerColor = Color(0xFF1A1614),
-                        title = { Text("Permission Required", color = Color.White, fontWeight = FontWeight.Bold) },
-                        text = { 
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                Text(
-                                    "ApexSense needs these permissions to function properly:",
-                                    color = Color.White,
-                                    fontSize = 14.sp
-                                )
-                                if (needsOverlay) {
-                                    Text("• Display Over Other Apps (For Crosshair & Monitor)", color = Color.Gray, fontSize = 13.sp)
-                                }
-                                if (needsWriteSettings) {
-                                    Text("• Modify System Settings (For Resolution Changer)", color = Color.Gray, fontSize = 13.sp)
-                                }
-                            }
-                        },
-                        confirmButton = {
-                            Button(
-                                onClick = {
+                    if (needsOverlay || needsWriteSettings) {
+                        AlertDialog(
+                            onDismissRequest = { /* Don't dismiss without action */ },
+                            containerColor = Color(0xFF1A1614),
+                            title = { Text("Izin Diperlukan", color = Color.White, fontWeight = FontWeight.Bold) },
+                            text = { 
+                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    Text(
+                                        "ApexSense memerlukan izin berikut agar dapat berfungsi dengan baik:",
+                                        color = Color.White,
+                                        fontSize = 14.sp
+                                    )
                                     if (needsOverlay) {
-                                        val intent = Intent(
-                                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                            Uri.parse("package:${context.packageName}")
-                                        )
-                                        context.startActivity(intent)
-                                    } else if (needsWriteSettings) {
-                                        val intent = Intent(
-                                            Settings.ACTION_MANAGE_WRITE_SETTINGS,
-                                            Uri.parse("package:${context.packageName}")
-                                        )
-                                        context.startActivity(intent)
+                                        Text("• Tampilkan di Atas Aplikasi Lain (Untuk Crosshair & Monitor)", color = Color.Gray, fontSize = 13.sp)
                                     }
-                                    
-                                    // Re-check after returning (the dialog will re-evaluate on next recomposition if app resumed)
-                                    showPermissionDialog = !Settings.canDrawOverlays(context) || !android.provider.Settings.System.canWrite(context)
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text(if (needsOverlay) "GRANT OVERLAY" else "GRANT WRITE SETTINGS", fontWeight = FontWeight.Bold)
+                                    if (needsWriteSettings) {
+                                        Text("• Ubah Setelan Sistem (Untuk Pengubah Resolusi)", color = Color.Gray, fontSize = 13.sp)
+                                    }
+                                }
+                            },
+                            confirmButton = {
+                                Button(
+                                    onClick = {
+                                        if (needsOverlay) {
+                                            val intent = Intent(
+                                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                                Uri.parse("package:${context.packageName}")
+                                            )
+                                            context.startActivity(intent)
+                                        } else if (needsWriteSettings) {
+                                            val intent = Intent(
+                                                Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                                                Uri.parse("package:${context.packageName}")
+                                            )
+                                            context.startActivity(intent)
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
+                                    shape = RoundedCornerShape(12.dp)
+                                ) {
+                                    Text(if (needsOverlay) "BERIKAN IZIN OVERLAY" else "BERIKAN IZIN SISTEM", fontWeight = FontWeight.Bold)
+                                }
                             }
-                        }
-                    )
+                        )
+                    } else {
+                        showPermissionDialog = false
+                    }
                 }
 
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
