@@ -66,7 +66,7 @@ fun GameToolsScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                PageHeader(title = "Tools")
+                PageHeader(title = "Alat")
             }
 
             item {
@@ -188,7 +188,7 @@ fun GameToolsScreen(navController: NavController) {
             item {
                 ActionToolItem(
                     title = "Sensitivity Engine",
-                    subtitle = "Automated sensitivity calculation based on device specs",
+                    subtitle = "Kalkulasi sensitivitas otomatis berdasarkan spek perangkat",
                     onClick = { navController.navigate(Screen.SensitivityEngine.route) },
                     icon = Icons.Filled.Calculate
                 )
@@ -242,12 +242,12 @@ fun GameToolsScreen(navController: NavController) {
                         ) {
                             val monitorConfig by AppMonitorState.config.collectAsState()
                             Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                MonitorToggleItem("CPU Information", monitorConfig.showCpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
-                                MonitorToggleItem("GPU Information", monitorConfig.showGpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
-                                MonitorToggleItem("RAM Information", monitorConfig.showRam) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
-                                MonitorToggleItem("Battery Information", monitorConfig.showBattery) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
-                                MonitorToggleItem("Temperature Information", monitorConfig.showTemp) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
-                                MonitorToggleItem("FPS Information", monitorConfig.showFps) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
+                                MonitorToggleItem("Informasi CPU", monitorConfig.showCpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
+                                MonitorToggleItem("Informasi GPU", monitorConfig.showGpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
+                                MonitorToggleItem("Informasi RAM", monitorConfig.showRam) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
+                                MonitorToggleItem("Informasi Baterai", monitorConfig.showBattery) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
+                                MonitorToggleItem("Informasi Suhu", monitorConfig.showTemp) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
+                                MonitorToggleItem("Informasi FPS", monitorConfig.showFps) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
                             }
                         }
                     }
@@ -365,14 +365,14 @@ fun CrosshairConfigArea() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Customization", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text("Kustomisasi", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 TextButton(
                     onClick = { CrosshairState.update { com.apexsense.service.CrosshairConfig() } },
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(14.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Reset", color = AccentOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text("Atur Ulang", color = AccentOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
             
@@ -495,7 +495,7 @@ fun CrosshairConfigArea() {
 
             // Size Slider
             Column {
-                Text("Size ${ String.format("%.1fx", config.size) }", color = Color.Gray, fontSize = 10.sp)
+                Text("Ukuran ${ String.format("%.1fx", config.size) }", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.size,
                     onValueChange = { newSize -> CrosshairState.update { it.copy(size = newSize) } },
@@ -506,7 +506,7 @@ fun CrosshairConfigArea() {
 
             // Alpha Slider
             Column {
-                Text("Alpha ${ (config.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
+                Text("Transparansi ${ (config.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.alpha,
                     onValueChange = { newAlpha -> CrosshairState.update { it.copy(alpha = newAlpha) } },
@@ -516,7 +516,7 @@ fun CrosshairConfigArea() {
 
             // Rotation Slider
             Column {
-                Text("Rotation ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
+                Text("Rotasi ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.rotation,
                     onValueChange = { newRot -> CrosshairState.update { it.copy(rotation = newRot) } },

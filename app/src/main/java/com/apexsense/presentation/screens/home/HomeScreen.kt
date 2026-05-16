@@ -71,7 +71,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
                 ) {
                     ModernActionCard(
                             modifier = Modifier.weight(1f),
-                            title = "Game Library",
+                            title = "Pustaka Game",
                             subtitle = "${state.gameCount} Ditambahkan",
                             icon = Icons.Filled.Games,
                             onClick = { navController.navigate(Screen.GameLibrary.route) }
@@ -81,7 +81,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
 
             item {
                 Text(
-                        "SYSTEM HEALTH",
+                        "KESEHATAN SISTEM",
                         color = Color.Gray,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -94,13 +94,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
                 ) {
                     StatusWidget(
                             modifier = Modifier.weight(1f),
-                            label = "RAM USAGE",
+                            label = "PENGGUNAAN RAM",
                             value = "${String.format("%.1f", state.ramUsed)} / ${String.format("%.1f", state.ramTotal)} GB",
                             icon = Icons.Filled.Memory
                     )
                     StatusWidget(
                             modifier = Modifier.weight(1f),
-                            label = "STORAGE",
+                            label = "PENYIMPANAN",
                             value = "${String.format("%.1f", state.storageUsed)} / ${String.format("%.1f", state.storageTotal)} GB",
                             icon = Icons.Filled.Storage
                     )
@@ -161,7 +161,7 @@ fun HeaderSection() {
             )
         }
         Text(
-                text = "OPTIMIZED FOR PERFORMANCE",
+                text = "DIOPTIMALKAN UNTUK PERFORMA",
                 color = Color.Gray,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
@@ -190,7 +190,7 @@ fun HardwareMonitorPro(state: HomeState) {
                     verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                        "HARDWARE STATUS",
+                        "STATUS PERANGKAT",
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -210,13 +210,13 @@ fun HardwareMonitorPro(state: HomeState) {
                     horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 CircularMetric(
-                        label = "CPU LOAD",
+                        label = "BEBAN CPU",
                         value = state.cpuUsage,
                         suffix = "%",
                         progress = state.cpuUsage / 100f
                 )
                 CircularMetric(
-                        label = "TEMP",
+                        label = "SUHU",
                         value = state.temperature.toInt(),
                         suffix = "°C",
                         progress = (state.temperature / 100f).toFloat()
@@ -276,7 +276,7 @@ fun SensitivitySearchSection(
 ) {
     Column {
         Text(
-                "SENSITIVITY ENGINE",
+                "MESIN SENSITIVITAS",
                 color = Color.Gray,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -301,7 +301,7 @@ fun SensitivitySearchSection(
                     OutlinedTextField(
                             value = width,
                             onValueChange = onWidthChange,
-                            label = { Text("Width", fontSize = 12.sp) },
+                            label = { Text("Lebar", fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
                             colors =
@@ -315,7 +315,7 @@ fun SensitivitySearchSection(
                     OutlinedTextField(
                             value = height,
                             onValueChange = onHeightChange,
-                            label = { Text("Height", fontSize = 12.sp) },
+                            label = { Text("Tinggi", fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
                             colors =
@@ -336,7 +336,7 @@ fun SensitivitySearchSection(
                 ) {
                     Icon(Icons.Default.FlashOn, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("CALCULATE NOW", fontWeight = FontWeight.Bold)
+                    Text("HITUNG SEKARANG", fontWeight = FontWeight.Bold)
                 }
             }
         }

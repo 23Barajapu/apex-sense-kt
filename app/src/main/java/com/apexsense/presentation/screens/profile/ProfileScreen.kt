@@ -41,7 +41,7 @@ fun ProfileScreen() {
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            PageHeader(title = "Profile")
+            PageHeader(title = "Profil")
             
             val context = LocalContext.current
             val deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}"
@@ -50,7 +50,6 @@ fun ProfileScreen() {
             val totalRam = getDeviceInfoRam(context)
 
             var showLanguageSheet by remember { mutableStateOf(false) }
-            var selectedLanguage by remember { mutableStateOf("Default Sistem") }
             var searchQuery by remember { mutableStateOf("") }
 
             // Language Bottom Sheet
@@ -97,13 +96,29 @@ fun ProfileScreen() {
                             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
                         )
 
-                        val languages = listOf("Default Sistem", "English", "Indonesia")
-                        languages.filter { lang -> lang.lowercase().contains(searchQuery.lowercase()) }.forEach { lang ->
+                        val languages = mapOf(
+                            "Default Sistem" to "",
+                            "English" to "en",
+                            "Indonesia" to "id"
+                        )
+                        
+                        // Get current locale
+                        val currentLocale = androidx.appcompat.app.AppCompatDelegate.getApplicationLocales().get(0)?.language ?: ""
+                        
+                        languages.keys.filter { lang -> lang.lowercase().contains(searchQuery.lowercase()) }.forEach { lang ->
+                            val localeCode = languages[lang] ?: ""
+                            val isSelected = if (lang == "Default Sistem") currentLocale == "" else currentLocale == localeCode
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .clickable { 
-                                        selectedLanguage = lang
+                                        val appLocale: androidx.core.os.LocaleListCompat = if (localeCode.isEmpty()) {
+                                            androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+                                        } else {
+                                            androidx.core.os.LocaleListCompat.forLanguageTags(localeCode)
+                                        }
+                                        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(appLocale)
                                         showLanguageSheet = false 
                                     }
                                     .padding(vertical = 16.dp),
@@ -112,9 +127,14 @@ fun ProfileScreen() {
                             ) {
                                 Text(lang, color = Color.White, fontSize = 16.sp)
                                 RadioButton(
-                                    selected = selectedLanguage == lang,
+                                    selected = isSelected,
                                     onClick = { 
-                                        selectedLanguage = lang
+                                        val appLocale: androidx.core.os.LocaleListCompat = if (localeCode.isEmpty()) {
+                                            androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+                                        } else {
+                                            androidx.core.os.LocaleListCompat.forLanguageTags(localeCode)
+                                        }
+                                        androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(appLocale)
                                         showLanguageSheet = false 
                                     },
                                     colors = RadioButtonDefaults.colors(selectedColor = AccentOrange, unselectedColor = Color.Gray)

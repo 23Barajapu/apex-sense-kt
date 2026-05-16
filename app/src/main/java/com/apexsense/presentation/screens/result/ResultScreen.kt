@@ -44,8 +44,8 @@ fun ResultScreen(
             TopAppBar(
                 title = { 
                     Column {
-                        Text("SYSTEM SCAN", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-                        Text("SENSITIVITY OPTIMIZATION", fontSize = 10.sp, color = AccentOrange)
+                        Text("PEMINDAIAN SISTEM", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                        Text("OPTIMALISASI SENSITIVITAS", fontSize = 10.sp, color = AccentOrange)
                     }
                 },
                 navigationIcon = {
@@ -85,7 +85,7 @@ fun ResultScreen(
                             Box(modifier = Modifier.size(4.dp, 24.dp).background(AccentOrange))
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                "MATCHING CONFIG FOR ${width}x${height}",
+                                "KONFIGURASI COCOK UNTUK ${width}x${height}",
                                 color = Color.White,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
@@ -95,7 +95,7 @@ fun ResultScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    Text("OPTIMIZED VALUES", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Text("NILAI TEROPTIMALISASI", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                     Spacer(modifier = Modifier.height(12.dp))
 
                     SensitivityGridPro(state.device)
@@ -115,7 +115,7 @@ fun ResultScreen(
 fun SensitivityGridPro(device: com.apexsense.domain.model.Device?) {
     val items = listOf(
         "DPI" to (device?.recommended_dpi ?: 440).toString(),
-        "GENERAL" to (device?.gen_sens?.toInt() ?: 95).toString(),
+        "UMUM" to (device?.gen_sens?.toInt() ?: 95).toString(),
         "RED DOT" to (device?.red_dot_sens?.toInt() ?: 90).toString(),
         "2X SCOPE" to (device?.scope_2x_sens?.toInt() ?: 85).toString(),
         "4X SCOPE" to (device?.scope_4x_sens?.toInt() ?: 80).toString(),
@@ -158,7 +158,7 @@ fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
         modifier = Modifier.border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text("CALIBRATION FEEDBACK", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text("UMPAN BALIK KALIBRASI", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(20.dp))
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -189,7 +189,7 @@ fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
                 ) {
                     Icon(Icons.Filled.ThumbUp, contentDescription = null, tint = AccentOrange)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("PERFECT", color = AccentOrange)
+                    Text("SEMPURNA", color = AccentOrange)
                 }
                 OutlinedButton(
                     onClick = { onSubmit("Downvote", sensation) },
@@ -199,7 +199,7 @@ fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
                 ) {
                     Icon(Icons.Filled.ThumbDown, contentDescription = null, tint = Color.Gray)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("ADJUST", color = Color.Gray)
+                    Text("SESUAIKAN", color = Color.Gray)
                 }
             }
         }

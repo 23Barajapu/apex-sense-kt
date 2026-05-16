@@ -34,7 +34,7 @@ fun SensitivityEngineScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SENSITIVITY ENGINE", fontWeight = FontWeight.Black, fontSize = 16.sp) },
+                title = { Text("MESIN SENSITIVITAS", fontWeight = FontWeight.Black, fontSize = 16.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
@@ -105,7 +105,7 @@ fun SensitivityEngineScreen(navController: NavController) {
             ) {
                 Icon(Icons.Default.FlashOn, contentDescription = null)
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("GENERATE SENSITIVITY", fontWeight = FontWeight.Black)
+                Text("BUAT SENSITIVITAS", fontWeight = FontWeight.Black)
             }
             
             Spacer(modifier = Modifier.height(24.dp))
