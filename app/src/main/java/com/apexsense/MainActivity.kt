@@ -56,13 +56,35 @@ class MainActivity : ComponentActivity() {
                 var showPermissionDialog by remember { 
                     mutableStateOf(!Settings.canDrawOverlays(context) || !android.provider.Settings.System.canWrite(context)) 
                 }
-
+                var permissionTick by remember { mutableStateOf(0) }
+                
+                // Automatic polling to check permissions every 500ms while dialog is shown
+                LaunchedEffect(showPermissionDialog) {
+                    if (showPermissionDialog) {
+                        while (true) {
+                            val isOverlayGranted = Settings.canDrawOverlays(context)
+                            val isWriteGranted = android.provider.Settings.System.canWrite(context)
+                            
+                            if (isOverlayGranted && isWriteGranted) {
+                                showPermissionDialog = false
+                                break
+                            }
+                            
+                            // Trigger recomposition
+                            permissionTick++
+                            
+                            kotlinx.coroutines.delay(500)
+                        }
+                    }
+                }
+                
                 // Add Lifecycle observer to refresh permission status when returning to app
                 val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
                 DisposableEffect(lifecycleOwner) {
                     val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
                         if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
                             showPermissionDialog = !Settings.canDrawOverlays(context) || !android.provider.Settings.System.canWrite(context)
+                            permissionTick++
                         }
                     }
                     lifecycleOwner.lifecycle.addObserver(observer)
@@ -72,6 +94,9 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (showPermissionDialog) {
+                    // Force re-evaluation by reading permissionTick
+                    if (permissionTick >= 0) { } 
+                    
                     val needsOverlay = !Settings.canDrawOverlays(context)
                     val needsWriteSettings = !android.provider.Settings.System.canWrite(context)
 
@@ -80,7 +105,7 @@ class MainActivity : ComponentActivity() {
                         AlertDialog(
                             onDismissRequest = { /* Don't dismiss */ },
                             containerColor = Color(0xFF1A1614),
-                            title = { Text("Izin Tahap 1: Overlay", color = Color.White, fontWeight = FontWeight.Bold) },
+                            title = { Text("Izin Overlay", color = Color.White, fontWeight = FontWeight.Bold) },
                             text = { 
                                 Text(
                                     "ApexSense perlu izin 'Tampilkan di Atas Aplikasi Lain' agar Crosshair dan Monitor bisa muncul saat kamu bermain game.",
@@ -97,6 +122,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         context.startActivity(intent)
                                     },
+                                    modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
@@ -126,6 +152,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                         context.startActivity(intent)
                                     },
+                                    modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.buttonColors(containerColor = com.apexsense.presentation.theme.AccentOrange),
                                     shape = RoundedCornerShape(12.dp)
                                 ) {
