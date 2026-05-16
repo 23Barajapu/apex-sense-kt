@@ -18,6 +18,10 @@ data class HomeState(
     val deviceModel: String = "",
     val cpuUsage: Int = 0,
     val temperature: Double = 0.0,
+    val ramUsed: Double = 0.0,
+    val ramTotal: Double = 0.0,
+    val storageUsed: Double = 0.0,
+    val storageTotal: Double = 0.0,
     val gameCount: Int = 0,
     val isLoading: Boolean = false,
     val error: String? = null
@@ -32,17 +36,26 @@ class HomeViewModel : ViewModel() {
     fun startMonitoring(context: Context) {
         viewModelScope.launch {
             val localCount = getLocalGameCount(context)
+            val ramInfo = HardwareMonitorUtils.getRamInfo(context)
+            val storageInfo = HardwareMonitorUtils.getStorageInfo()
+            
             _state.value = _state.value.copy(
                 deviceModel = HardwareMonitorUtils.getDeviceModel(),
-                gameCount = localCount
+                gameCount = localCount,
+                ramUsed = ramInfo.first,
+                ramTotal = ramInfo.second,
+                storageUsed = storageInfo.first,
+                storageTotal = storageInfo.second
             )
             while (true) {
                 val cpu = HardwareMonitorUtils.getCpuUsage()
                 val temp = HardwareMonitorUtils.getBatteryTemperature(context)
+                val currentRam = HardwareMonitorUtils.getRamInfo(context)
                 
                 _state.value = _state.value.copy(
                     cpuUsage = cpu,
-                    temperature = temp
+                    temperature = temp,
+                    ramUsed = currentRam.first
                 )
 
                 // Save to history every 60 seconds (simulated)

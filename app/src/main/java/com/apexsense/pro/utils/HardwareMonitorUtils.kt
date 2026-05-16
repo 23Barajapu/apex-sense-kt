@@ -63,6 +63,30 @@ object HardwareMonitorUtils {
         return (usedMemory.toDouble() / memoryInfo.totalMem * 100).toInt()
     }
 
+    fun getRamInfo(context: Context): Pair<Double, Double> {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+        val memoryInfo = android.app.ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+        val totalGB = memoryInfo.totalMem.toDouble() / (1024 * 1024 * 1024)
+        val usedGB = (memoryInfo.totalMem - memoryInfo.availMem).toDouble() / (1024 * 1024 * 1024)
+        return Pair(usedGB, totalGB)
+    }
+
+    fun getStorageInfo(): Pair<Double, Double> {
+        val path = android.os.Environment.getDataDirectory()
+        val stat = android.os.StatFs(path.path)
+        val blockSize = stat.blockSizeLong
+        val totalBlocks = stat.blockCountLong
+        val availableBlocks = stat.availableBlocksLong
+        val totalSize = totalBlocks * blockSize
+        val availableSize = availableBlocks * blockSize
+        val usedSize = totalSize - availableSize
+        
+        val totalGB = totalSize.toDouble() / (1024 * 1024 * 1024)
+        val usedGB = usedSize.toDouble() / (1024 * 1024 * 1024)
+        return Pair(usedGB, totalGB)
+    }
+
     fun getBatteryTemperature(context: Context): Double {
         val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         val temp = intent?.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0) ?: 0

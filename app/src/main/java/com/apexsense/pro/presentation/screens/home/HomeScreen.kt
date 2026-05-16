@@ -95,13 +95,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
                     StatusWidget(
                             modifier = Modifier.weight(1f),
                             label = "RAM USAGE",
-                            value = "2.4 GB",
+                            value = "${String.format("%.1f", state.ramUsed)} / ${String.format("%.1f", state.ramTotal)} GB",
                             icon = Icons.Filled.Memory
                     )
                     StatusWidget(
                             modifier = Modifier.weight(1f),
                             label = "STORAGE",
-                            value = "85%",
+                            value = "${String.format("%.1f", state.storageUsed)} / ${String.format("%.1f", state.storageTotal)} GB",
                             icon = Icons.Filled.Storage
                     )
                 }

@@ -268,8 +268,10 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                             }
 
                             LaunchedEffect(config) {
-                                delay(100)
-                                windowManager.updateViewLayout(this@apply, params)
+                                // Reset to wrap content first to allow shrinking
+                                params.width = WindowManager.LayoutParams.WRAP_CONTENT
+                                params.height = WindowManager.LayoutParams.WRAP_CONTENT
+                                try { windowManager.updateViewLayout(this@apply, params) } catch (_: Exception) {}
                             }
 
                             // Compact Stats Pill - count active items for divider logic
@@ -279,9 +281,13 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                             Row(
                                 modifier = Modifier
                                     .onGloballyPositioned { layoutCoordinates ->
-                                        params.width = layoutCoordinates.size.width
-                                        params.height = layoutCoordinates.size.height
-                                        try { windowManager.updateViewLayout(this@apply, params) } catch (_: Exception) {}
+                                        val newWidth = layoutCoordinates.size.width
+                                        val newHeight = layoutCoordinates.size.height
+                                        if (params.width != newWidth || params.height != newHeight) {
+                                            params.width = newWidth
+                                            params.height = newHeight
+                                            try { windowManager.updateViewLayout(this@apply, params) } catch (_: Exception) {}
+                                        }
                                     }
                                     .background(Color(0xFF0D0D0D).copy(alpha = 0.75f), RoundedCornerShape(14.dp))
                                     .border(0.5f.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(14.dp))

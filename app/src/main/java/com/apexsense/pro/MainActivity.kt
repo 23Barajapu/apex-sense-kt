@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.apexsense.pro.presentation.components.ApexBottomBar
 import com.apexsense.pro.presentation.navigation.Screen
 import com.apexsense.pro.presentation.screens.engine.SensitivityEngineScreen
@@ -84,12 +85,25 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
+                val showBottomBar = when {
+                    currentRoute == Screen.Splash.route -> false
+                    currentRoute == Screen.GameLibrary.route -> false
+                    currentRoute == Screen.SensitivityEngine.route -> false
+                    currentRoute?.startsWith("result") == true -> false
+                    else -> currentRoute != null
+                }
+
                 Scaffold(
                     bottomBar = {
-                        com.apexsense.pro.presentation.components.ApexBottomBar(
-                            navController = navController,
-                            pagerState = pagerState
-                        )
+                        if (showBottomBar) {
+                            com.apexsense.pro.presentation.components.ApexBottomBar(
+                                navController = navController,
+                                pagerState = pagerState
+                            )
+                        }
                     },
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
                 ) { innerPadding ->

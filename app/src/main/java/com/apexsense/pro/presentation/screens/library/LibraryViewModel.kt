@@ -32,13 +32,15 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
     private val _state = MutableStateFlow(LibraryState())
     val state: StateFlow<LibraryState> = _state
 
+    private var cachedInstalledApps: List<Game>? = null
+
     init {
         loadGames()
     }
 
     fun toggleAddSheet(show: Boolean) {
         _state.value = _state.value.copy(showAddSheet = show)
-        if (show && _state.value.allApps.isEmpty()) {
+        if (show) {
             loadAllApps()
         }
     }
@@ -73,8 +75,10 @@ class LibraryViewModel(application: Application) : AndroidViewModel(application)
 
     private fun loadAllApps() {
         viewModelScope.launch(Dispatchers.IO) {
-            val all = getInstalledApps()
-            _state.value = _state.value.copy(allApps = all)
+            val all = cachedInstalledApps ?: getInstalledApps().also { cachedInstalledApps = it }
+            val currentGames = _state.value.games.map { it.package_name }.toSet()
+            val filtered = all.filter { it.package_name !in currentGames }
+            _state.value = _state.value.copy(allApps = filtered)
         }
     }
 
