@@ -2,7 +2,7 @@
   <img src="app/src/main/res/drawable/app_logo.jpg" width="140" style="border-radius: 28px" />
 </p>
 
-<h1 align="center">ApexSense Pro</h1>
+# ApexSense
 
 <p align="center">
   <b>🎮 Rekan Setia Gaming Terbaik untuk Android</b><br/>
@@ -11,15 +11,15 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white" />
-  <img src="https://img.shields.io/badge/Status-Premium-orange" />
+  <img src="https://img.shields.io/badge/Status-Stable-green" />
   <img src="https://img.shields.io/badge/UI-Modern%20Dark-1A1614" />
 </p>
 
 ---
 
-## ✨ Tentang ApexSense Pro
+## ✨ Tentang ApexSense
 
-**ApexSense Pro** adalah aplikasi utilitas gaming premium yang dirancang khusus untuk meningkatkan pengalaman bermain game di perangkat Android. Dengan antarmuka modern yang futuristik dan performa yang ringan, ApexSense Pro memberikan kontrol penuh kepada pemain untuk mengoptimalkan perangkat dan meningkatkan presisi permainan.
+**ApexSense** adalah aplikasi utilitas gaming premium yang dirancang khusus untuk meningkatkan pengalaman bermain game di perangkat Android. Dengan antarmuka modern yang futuristik dan performa yang ringan, ApexSense memberikan kontrol penuh kepada pemain untuk mengoptimalkan perangkat dan meningkatkan presisi permainan.
 
 ## 🎯 Fitur Unggulan
 
