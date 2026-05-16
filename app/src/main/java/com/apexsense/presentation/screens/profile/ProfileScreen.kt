@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +43,7 @@ fun ProfileScreen() {
                 .fillMaxSize()
                 .padding(horizontal = 24.dp)
         ) {
-            PageHeader(title = "Profil")
+            PageHeader(title = stringResource(id = R.string.profile_title))
             
             val context = LocalContext.current
             val deviceModel = "${Build.MANUFACTURER} ${Build.MODEL}"
@@ -66,7 +68,7 @@ fun ProfileScreen() {
                             .padding(bottom = 32.dp)
                     ) {
                         Text(
-                            "Bahasa",
+                            stringResource(id = R.string.language_title),
                             color = Color.White,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
@@ -77,7 +79,7 @@ fun ProfileScreen() {
                         OutlinedTextField(
                             value = searchQuery,
                             onValueChange = { searchQuery = it },
-                            placeholder = { Text("Cari bahasa", color = Color.Gray) },
+                            placeholder = { Text(stringResource(id = R.string.search_language), color = Color.Gray) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
@@ -90,14 +92,14 @@ fun ProfileScreen() {
                         )
                         
                         Text(
-                            "Viralkan Game Corner ini dinegaramu jika tidak ada bahasamu disini",
+                            stringResource(id = R.string.viral_msg),
                             color = AccentOrange,
                             fontSize = 11.sp,
                             modifier = Modifier.padding(top = 8.dp, bottom = 16.dp)
                         )
 
                         val languages = mapOf(
-                            "Default Sistem" to "",
+                            stringResource(id = R.string.default_system) to "",
                             "English" to "en",
                             "Indonesia" to "id"
                         )
@@ -107,7 +109,8 @@ fun ProfileScreen() {
                         
                         languages.keys.filter { lang -> lang.lowercase().contains(searchQuery.lowercase()) }.forEach { lang ->
                             val localeCode = languages[lang] ?: ""
-                            val isSelected = if (lang == "Default Sistem") currentLocale == "" else currentLocale == localeCode
+                            val isDefaultSistem = lang == stringResource(id = R.string.default_system)
+                            val isSelected = if (isDefaultSistem) currentLocale == "" else currentLocale == localeCode
 
                             Row(
                                 modifier = Modifier
@@ -152,7 +155,7 @@ fun ProfileScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    "Info Sistem",
+                    stringResource(id = R.string.system_info),
                     color = Color.White,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
@@ -194,13 +197,13 @@ fun ProfileScreen() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 SystemInfoCard(
                     modifier = Modifier.weight(1f),
-                    label = "Model Perangkat",
+                    label = stringResource(id = R.string.device_model),
                     value = deviceModel,
                     icon = Icons.Filled.Smartphone
                 )
                 SystemInfoCard(
                     modifier = Modifier.weight(1f),
-                    label = "Total RAM",
+                    label = stringResource(id = R.string.total_ram),
                     value = totalRam,
                     icon = Icons.Filled.Bolt
                 )
@@ -209,13 +212,13 @@ fun ProfileScreen() {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 SystemInfoCard(
                     modifier = Modifier.weight(1f),
-                    label = "Versi Android",
+                    label = stringResource(id = R.string.android_version),
                     value = androidVer,
                     icon = Icons.Filled.Android
                 )
                 SystemInfoCard(
                     modifier = Modifier.weight(1f),
-                    label = "ABI yang Didukung",
+                    label = stringResource(id = com.apexsense.R.string.supported_abi),
                     value = abi,
                     icon = Icons.Filled.Adjust
                 )

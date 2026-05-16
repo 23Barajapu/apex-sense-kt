@@ -28,7 +28,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.apexsense.presentation.components.ApexBottomBar
 import com.apexsense.presentation.navigation.Screen
 import com.apexsense.presentation.screens.engine.SensitivityEngineScreen
-import com.apexsense.presentation.screens.history.HistoryScreen
 import com.apexsense.presentation.screens.home.HomeScreen
 import com.apexsense.presentation.screens.library.LibraryScreen
 import com.apexsense.presentation.screens.profile.ProfileScreen
@@ -41,7 +40,9 @@ import io.ktor.client.call.body
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 
-class MainActivity : ComponentActivity() {
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
@@ -118,7 +119,7 @@ class MainActivity : ComponentActivity() {
                         val latestCode = remoteInfo["latest_version_code"]?.toString()?.toIntOrNull() ?: 1
                         val downloadLink = remoteInfo["update_url"]?.toString()?.replace("\"", "") ?: ""
                         
-                        if (latestCode > 1) { // 1 adalah versionCode saat ini di build.gradle.kts
+                        if (latestCode > 2) { // 2 adalah versionCode saat ini di build.gradle.kts
                             updateUrl = downloadLink
                             showUpdateDialog = true
                         }
@@ -293,9 +294,7 @@ class MainActivity : ComponentActivity() {
                             composable(Screen.GameLibrary.route) {
                                 LibraryScreen(navController = navController)
                             }
-                            composable(Screen.HardwareHistory.route) {
-                                HistoryScreen(navController = navController)
-                            }
+
                             composable(Screen.GameTools.route) {
                                 // Redirect to MainContainer
                                 LaunchedEffect(Unit) {

@@ -39,6 +39,8 @@ import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import com.apexsense.presentation.components.CopyrightFooter
 import com.apexsense.presentation.components.PageHeader
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import com.apexsense.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +63,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     .padding(horizontal = 24.dp)
             ) {
                 Text(
-                    "TAMBAH GAME KE GUDANG",
+                    stringResource(id = R.string.add_game_to_vault),
                     color = Color.White,
                     fontWeight = FontWeight.Black,
                     fontSize = 18.sp,
@@ -109,8 +111,8 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                 TopAppBar(
                     title = { 
                         Column {
-                            Text("GUDANG GAME", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-                            Text("PUSTAKA PRIBADI", fontSize = 10.sp, color = AccentOrange)
+                            Text(stringResource(id = R.string.game_vault_header), fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                            Text(stringResource(id = R.string.private_library), fontSize = 10.sp, color = AccentOrange)
                         }
                     },
                     navigationIcon = {
@@ -138,7 +140,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
-                        PageHeader(title = "Gudang")
+                        PageHeader(title = stringResource(id = R.string.vault_header))
                     }
 
                     // Tambah Game Card
@@ -167,7 +169,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                                     Icon(Icons.Default.Add, contentDescription = null, tint = AccentOrange)
                                 }
                                 Spacer(modifier = Modifier.height(12.dp))
-                                Text("TAMBAH GAME", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                                Text(stringResource(id = R.string.add_game_upper), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 12.sp)
                             }
                         }
                     }
@@ -295,7 +297,7 @@ fun GameBoostOverlay(progress: Float, text: String) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "APEX BOOST AKTIF",
+                    text = stringResource(id = R.string.apex_boost_active),
                     color = Color.White,
                     fontWeight = FontWeight.Black,
                     fontSize = 22.sp,
@@ -411,7 +413,7 @@ fun ModernGameCard(game: com.apexsense.domain.model.Game, onDelete: () -> Unit, 
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("TERINSTAL", color = AccentOrange, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                Text(stringResource(id = R.string.installed_label), color = AccentOrange, fontSize = 8.sp, fontWeight = FontWeight.Bold)
                 Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
             }
         }

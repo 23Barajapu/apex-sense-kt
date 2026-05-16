@@ -21,6 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import com.apexsense.presentation.theme.AccentOrange
 import com.apexsense.presentation.theme.DarkBackground
 import com.apexsense.presentation.theme.SurfaceGray
@@ -66,13 +68,13 @@ fun GameToolsScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-                PageHeader(title = "Alat")
+                PageHeader(title = stringResource(id = R.string.tools_header))
             }
 
             item {
                 ToolCard(
-                    title = "Pengubah Resolusi",
-                    subtitle = "Ubah resolusi layar (Lebar x Tinggi)",
+                    title = stringResource(id = R.string.resolution_changer_label),
+                    subtitle = stringResource(id = R.string.resolution_changer_desc),
                     icon = Icons.Filled.Refresh
                 ) {
                     Row(
@@ -105,28 +107,28 @@ fun GameToolsScreen(navController: NavController) {
                                     "display_size_forced",
                                     "${w}x${h}"
                                 )
-                                android.widget.Toast.makeText(context, "Resolusi diubah ke ${w}x${h}", android.widget.Toast.LENGTH_SHORT).show()
+                                android.widget.Toast.makeText(context, context.getString(R.string.resolution_changed_to, "${w}x${h}"), android.widget.Toast.LENGTH_SHORT).show()
                             } catch (e: SecurityException) {
                                 navController.navigate(Screen.DevOptionsGuide.route)
-                                android.widget.Toast.makeText(context, "Butuh izin tambahan untuk ubah resolusi!", android.widget.Toast.LENGTH_LONG).show()
+                                android.widget.Toast.makeText(context, context.getString(R.string.need_permission_res), android.widget.Toast.LENGTH_LONG).show()
                             } catch (e: Exception) {
                                 e.printStackTrace()
-                                android.widget.Toast.makeText(context, "Gagal: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                                android.widget.Toast.makeText(context, context.getString(R.string.failed_label, e.message ?: ""), android.widget.Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(50.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        Text("Terapkan Sekarang", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(id = R.string.apply_now), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
             item {
                 ToolCard(
-                    title = "Pengubah Lebar Terkecil",
-                    subtitle = "Timpa Lebar Terkecil (Smallest Width) ke perangkatmu secara langsung",
+                    title = stringResource(id = R.string.smallest_width_label),
+                    subtitle = stringResource(id = R.string.smallest_width_desc),
                     icon = Icons.Filled.SettingsSystemDaydream
                 ) {
                     Row(
@@ -166,29 +168,29 @@ fun GameToolsScreen(navController: NavController) {
                                     "display_density_forced",
                                     newDensity
                                 )
-                                android.widget.Toast.makeText(context, "Berhasil! Lebar Terkecil menjadi $dpValue dp", android.widget.Toast.LENGTH_SHORT).show()
+                                android.widget.Toast.makeText(context, context.getString(R.string.success_sw, dpValue), android.widget.Toast.LENGTH_SHORT).show()
                             } catch (e: SecurityException) {
                                 // If permission is missing, show the guide
                                 navController.navigate(Screen.DevOptionsGuide.route)
-                                android.widget.Toast.makeText(context, "Butuh izin tambahan! Ikuti panduan di sini.", android.widget.Toast.LENGTH_LONG).show()
+                                android.widget.Toast.makeText(context, context.getString(R.string.need_permission_guide), android.widget.Toast.LENGTH_LONG).show()
                             } catch (e: Exception) {
                                 e.printStackTrace()
-                                android.widget.Toast.makeText(context, "Gagal: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
+                                android.widget.Toast.makeText(context, context.getString(R.string.failed_label, e.message ?: ""), android.widget.Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(50.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
                         shape = RoundedCornerShape(16.dp)
                     ) {
-                        Text("Terapkan Sekarang", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(stringResource(id = R.string.apply_now), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
             item {
                 ActionToolItem(
-                    title = "Sensitivity Engine",
-                    subtitle = "Kalkulasi sensitivitas otomatis berdasarkan spek perangkat",
+                    title = stringResource(id = R.string.sensitivity_engine_title),
+                    subtitle = stringResource(id = R.string.sensitivity_engine_desc),
                     onClick = { navController.navigate(Screen.SensitivityEngine.route) },
                     icon = Icons.Filled.Calculate
                 )
@@ -197,8 +199,8 @@ fun GameToolsScreen(navController: NavController) {
             item {
                 Column {
                     ToggleToolItem(
-                        title = "Crosshair",
-                        subtitle = "Titik referensi di layar untuk penyelarasan tampilan",
+                        title = stringResource(id = R.string.crosshair_title),
+                        subtitle = stringResource(id = R.string.crosshair_desc),
                         checked = crosshairEnabled,
                         onCheckedChange = { 
                             crosshairEnabled = it
@@ -219,8 +221,8 @@ fun GameToolsScreen(navController: NavController) {
             item {
                 Column {
                     ToggleToolItem(
-                        title = "Monitor Sesi",
-                        subtitle = "Pantau performa perangkat saat kamu bermain",
+                        title = stringResource(id = R.string.session_monitor_title),
+                        subtitle = stringResource(id = R.string.session_monitor_desc),
                         checked = monitorEnabled,
                         onCheckedChange = { 
                             monitorEnabled = it
@@ -242,12 +244,12 @@ fun GameToolsScreen(navController: NavController) {
                         ) {
                             val monitorConfig by AppMonitorState.config.collectAsState()
                             Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                MonitorToggleItem("Informasi CPU", monitorConfig.showCpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
-                                MonitorToggleItem("Informasi GPU", monitorConfig.showGpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
-                                MonitorToggleItem("Informasi RAM", monitorConfig.showRam) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
-                                MonitorToggleItem("Informasi Baterai", monitorConfig.showBattery) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
-                                MonitorToggleItem("Informasi Suhu", monitorConfig.showTemp) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
-                                MonitorToggleItem("Informasi FPS", monitorConfig.showFps) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
+                                MonitorToggleItem(stringResource(id = R.string.info_cpu), monitorConfig.showCpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showCpu = !c.showCpu) } }
+                                MonitorToggleItem(stringResource(id = R.string.info_gpu), monitorConfig.showGpu) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showGpu = !c.showGpu) } }
+                                MonitorToggleItem(stringResource(id = R.string.info_ram), monitorConfig.showRam) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showRam = !c.showRam) } }
+                                MonitorToggleItem(stringResource(id = R.string.info_battery), monitorConfig.showBattery) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showBattery = !c.showBattery) } }
+                                MonitorToggleItem(stringResource(id = R.string.info_temp), monitorConfig.showTemp) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showTemp = !c.showTemp) } }
+                                MonitorToggleItem(stringResource(id = R.string.info_fps), monitorConfig.showFps) { AppMonitorState.update { c: com.apexsense.service.MonitorConfig -> c.copy(showFps = !c.showFps) } }
                             }
                         }
                     }
@@ -317,7 +319,7 @@ fun AppliedButton() {
         colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.1f)),
         shape = RoundedCornerShape(16.dp)
     ) {
-        Text("Diterapkan", color = Color.Gray)
+        Text(stringResource(id = R.string.applied), color = Color.Gray)
     }
 }
 
@@ -365,14 +367,14 @@ fun CrosshairConfigArea() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Kustomisasi", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(stringResource(id = R.string.customization), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 TextButton(
                     onClick = { CrosshairState.update { com.apexsense.service.CrosshairConfig() } },
                     contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp)
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(14.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Atur Ulang", color = AccentOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.reset), color = AccentOrange, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                 }
             }
             
@@ -495,7 +497,7 @@ fun CrosshairConfigArea() {
 
             // Size Slider
             Column {
-                Text("Ukuran ${ String.format("%.1fx", config.size) }", color = Color.Gray, fontSize = 10.sp)
+                Text(stringResource(id = R.string.size_label) + " ${ String.format("%.1fx", config.size) }", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.size,
                     onValueChange = { newSize -> CrosshairState.update { it.copy(size = newSize) } },
@@ -506,7 +508,7 @@ fun CrosshairConfigArea() {
 
             // Alpha Slider
             Column {
-                Text("Transparansi ${ (config.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
+                Text(stringResource(id = R.string.transparency_label) + " ${ (config.alpha * 100).toInt() }%", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.alpha,
                     onValueChange = { newAlpha -> CrosshairState.update { it.copy(alpha = newAlpha) } },
@@ -516,7 +518,7 @@ fun CrosshairConfigArea() {
 
             // Rotation Slider
             Column {
-                Text("Rotasi ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
+                Text(stringResource(id = R.string.rotation_label) + " ${ config.rotation.toInt() }°", color = Color.Gray, fontSize = 10.sp)
                 Slider(
                     value = config.rotation,
                     onValueChange = { newRot -> CrosshairState.update { it.copy(rotation = newRot) } },

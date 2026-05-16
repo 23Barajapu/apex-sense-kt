@@ -25,6 +25,8 @@ import androidx.navigation.NavController
 import com.apexsense.presentation.components.CopyrightFooter
 import com.apexsense.presentation.components.PageHeader
 import com.apexsense.presentation.navigation.Screen
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import com.apexsense.presentation.theme.*
 
 @Composable
@@ -51,14 +53,14 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
             item { Spacer(modifier = Modifier.height(20.dp)) }
 
             item {
-                PageHeader(title = "ApexSense")
+                PageHeader(title = stringResource(id = R.string.app_name))
             }
 
             item { HardwareMonitorPro(state) }
 
             item {
                 Text(
-                        "PERPUSTAKAAN GAME",
+                        stringResource(id = R.string.game_vault_header),
                         color = Color.Gray,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -71,8 +73,8 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
                 ) {
                     ModernActionCard(
                             modifier = Modifier.weight(1f),
-                            title = "Pustaka Game",
-                            subtitle = "${state.gameCount} Ditambahkan",
+                            title = stringResource(id = R.string.game_library),
+                            subtitle = "${state.gameCount} " + stringResource(id = R.string.added),
                             icon = Icons.Filled.Games,
                             onClick = { navController.navigate(Screen.GameLibrary.route) }
                     )
@@ -81,7 +83,7 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
 
             item {
                 Text(
-                        "KESEHATAN SISTEM",
+                        stringResource(id = R.string.system_health_header),
                         color = Color.Gray,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -94,13 +96,13 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = viewMode
                 ) {
                     StatusWidget(
                             modifier = Modifier.weight(1f),
-                            label = "PENGGUNAAN RAM",
+                            label = stringResource(id = R.string.ram_usage_label),
                             value = "${String.format("%.1f", state.ramUsed)} / ${String.format("%.1f", state.ramTotal)} GB",
                             icon = Icons.Filled.Memory
                     )
                     StatusWidget(
                             modifier = Modifier.weight(1f),
-                            label = "PENYIMPANAN",
+                            label = stringResource(id = R.string.storage_label),
                             value = "${String.format("%.1f", state.storageUsed)} / ${String.format("%.1f", state.storageTotal)} GB",
                             icon = Icons.Filled.Storage
                     )
@@ -161,7 +163,7 @@ fun HeaderSection() {
             )
         }
         Text(
-                text = "DIOPTIMALKAN UNTUK PERFORMA",
+                text = stringResource(id = R.string.optimized_performance),
                 color = Color.Gray,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Medium,
@@ -190,7 +192,7 @@ fun HardwareMonitorPro(state: HomeState) {
                     verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                        "STATUS PERANGKAT",
+                        stringResource(id = R.string.device_status),
                         color = Color.White,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold
@@ -210,13 +212,13 @@ fun HardwareMonitorPro(state: HomeState) {
                     horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 CircularMetric(
-                        label = "BEBAN CPU",
+                        label = stringResource(id = R.string.cpu_load),
                         value = state.cpuUsage,
                         suffix = "%",
                         progress = state.cpuUsage / 100f
                 )
                 CircularMetric(
-                        label = "SUHU",
+                        label = stringResource(id = R.string.temp_label),
                         value = state.temperature.toInt(),
                         suffix = "°C",
                         progress = (state.temperature / 100f).toFloat()
@@ -276,7 +278,7 @@ fun SensitivitySearchSection(
 ) {
     Column {
         Text(
-                "MESIN SENSITIVITAS",
+                stringResource(id = R.string.sensitivity_engine),
                 color = Color.Gray,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
@@ -301,7 +303,7 @@ fun SensitivitySearchSection(
                     OutlinedTextField(
                             value = width,
                             onValueChange = onWidthChange,
-                            label = { Text("Lebar", fontSize = 12.sp) },
+                            label = { Text(stringResource(id = R.string.width_label), fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
                             colors =
@@ -315,7 +317,7 @@ fun SensitivitySearchSection(
                     OutlinedTextField(
                             value = height,
                             onValueChange = onHeightChange,
-                            label = { Text("Tinggi", fontSize = 12.sp) },
+                            label = { Text(stringResource(id = R.string.height_label), fontSize = 12.sp) },
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(12.dp),
                             colors =
@@ -336,7 +338,7 @@ fun SensitivitySearchSection(
                 ) {
                     Icon(Icons.Default.FlashOn, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("HITUNG SEKARANG", fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.calculate_now), fontWeight = FontWeight.Bold)
                 }
             }
         }

@@ -280,18 +280,9 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
 
                             Row(
                                 modifier = Modifier
-                                    .onGloballyPositioned { layoutCoordinates ->
-                                        val newWidth = layoutCoordinates.size.width
-                                        val newHeight = layoutCoordinates.size.height
-                                        if (params.width != newWidth || params.height != newHeight) {
-                                            params.width = newWidth
-                                            params.height = newHeight
-                                            try { windowManager.updateViewLayout(this@apply, params) } catch (_: Exception) {}
-                                        }
-                                    }
-                                    .background(Color(0xFF0D0D0D).copy(alpha = 0.75f), RoundedCornerShape(14.dp))
-                                    .border(0.5f.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
-                                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                                    .background(Color(0xFF0D0D0D).copy(alpha = 0.6f), androidx.compose.foundation.shape.CircleShape)
+                                    .border(0.5f.dp, Color.White.copy(alpha = 0.12f), androidx.compose.foundation.shape.CircleShape)
+                                    .padding(horizontal = 12.dp, vertical = 1.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
@@ -361,25 +352,34 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                     color = AccentOrange,
                     fontSize = 7.sp,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 0.8.sp
+                    letterSpacing = 0.5.sp,
+                    style = androidx.compose.ui.text.TextStyle(
+                        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
             }
 
             if (isBattery) {
                 val cleanValue = value.replace("%", "").trim()
-                Row(verticalAlignment = Alignment.Bottom) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = cleanValue,
                         color = Color.White,
                         fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        style = androidx.compose.ui.text.TextStyle(
+                            platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false)
+                        )
                     )
                     Text(
                         text = "%",
                         color = AccentOrange,
                         fontSize = 7.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 1.dp, start = 1.dp)
+                        modifier = Modifier.padding(start = 1.dp),
+                        style = androidx.compose.ui.text.TextStyle(
+                            platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false)
+                        )
                     )
                 }
             } else {
@@ -389,7 +389,10 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    softWrap = false
+                    softWrap = false,
+                    style = androidx.compose.ui.text.TextStyle(
+                        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false)
+                    )
                 )
             }
         }
@@ -400,7 +403,7 @@ class OverlayService : LifecycleService(), ViewModelStoreOwner, SavedStateRegist
         Box(
             modifier = Modifier
                 .width(0.5f.dp)
-                .height(10.dp)
+                .height(8.dp)
                 .background(Color.White.copy(alpha = 0.12f))
         )
     }

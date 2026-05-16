@@ -21,6 +21,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import com.apexsense.presentation.theme.AccentOrange
 import com.apexsense.presentation.theme.DarkBackground
 import com.apexsense.presentation.theme.SurfaceGray
@@ -29,16 +31,16 @@ import com.apexsense.presentation.theme.SurfaceGray
 @Composable
 fun DevOptionsGuideScreen(navController: NavController) {
     val steps = listOf(
-        GuideStep("Buka Pengaturan", "Buka aplikasi Pengaturan di perangkatmu.", Icons.Default.Settings),
-        GuideStep("Tentang Ponsel", "Cari dan pilih menu 'Tentang Ponsel' atau 'Informasi Perangkat'.", Icons.Default.Settings),
-        GuideStep("Ketuk Nomor Bentukan", "Cari 'Nomor Bentukan' (Build Number) dan ketuk sebanyak 7 kali berturut-turut.", Icons.Default.CheckCircle),
-        GuideStep("Selesai!", "Sekarang Opsi Pengembang sudah aktif! Kembali ke aplikasi ini.", Icons.Default.CheckCircle)
+        GuideStep(stringResource(id = R.string.step_settings), stringResource(id = R.string.step_settings_desc), Icons.Default.Settings),
+        GuideStep(stringResource(id = R.string.step_about), stringResource(id = R.string.step_about_desc), Icons.Default.Settings),
+        GuideStep(stringResource(id = R.string.step_build), stringResource(id = R.string.step_build_desc), Icons.Default.CheckCircle),
+        GuideStep(stringResource(id = R.string.step_done), stringResource(id = R.string.step_done_desc), Icons.Default.CheckCircle)
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Aktivasi Opsi Pengembang", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = { Text(stringResource(id = R.string.dev_options_title), fontWeight = FontWeight.Bold, fontSize = 18.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back", tint = Color.White)
@@ -62,7 +64,7 @@ fun DevOptionsGuideScreen(navController: NavController) {
             item {
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    "Ikuti langkah-langkah di bawah untuk membuka fitur tingkat lanjut perangkatmu.",
+                    stringResource(id = R.string.dev_options_desc),
                     color = Color.Gray,
                     fontSize = 14.sp
                 )
@@ -81,7 +83,7 @@ fun DevOptionsGuideScreen(navController: NavController) {
                     colors = ButtonDefaults.buttonColors(containerColor = AccentOrange),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("SAYA MENGERTI", fontWeight = FontWeight.Bold)
+                    Text(stringResource(id = R.string.i_understand), fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.height(40.dp))
             }

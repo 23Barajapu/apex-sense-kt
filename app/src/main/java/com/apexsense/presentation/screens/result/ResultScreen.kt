@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import com.apexsense.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,8 +46,8 @@ fun ResultScreen(
             TopAppBar(
                 title = { 
                     Column {
-                        Text("PEMINDAIAN SISTEM", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-                        Text("OPTIMALISASI SENSITIVITAS", fontSize = 10.sp, color = AccentOrange)
+                        Text(stringResource(id = R.string.system_scan_header), fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                        Text(stringResource(id = R.string.sensitivity_optimization), fontSize = 10.sp, color = AccentOrange)
                     }
                 },
                 navigationIcon = {
@@ -85,7 +87,7 @@ fun ResultScreen(
                             Box(modifier = Modifier.size(4.dp, 24.dp).background(AccentOrange))
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
-                                "KONFIGURASI COCOK UNTUK ${width}x${height}",
+                                stringResource(id = R.string.config_suitable_for, "${width}x${height}"),
                                 color = Color.White,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold
@@ -95,7 +97,7 @@ fun ResultScreen(
 
                     Spacer(modifier = Modifier.height(24.dp))
                     
-                    Text("NILAI TEROPTIMALISASI", color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
+                    Text(stringResource(id = R.string.optimized_values), color = Color.Gray, fontSize = 10.sp, fontWeight = FontWeight.Bold, letterSpacing = 1.sp)
                     Spacer(modifier = Modifier.height(12.dp))
 
                     SensitivityGridPro(state.device)
@@ -114,12 +116,12 @@ fun ResultScreen(
 @Composable
 fun SensitivityGridPro(device: com.apexsense.domain.model.Device?) {
     val items = listOf(
-        "DPI" to (device?.recommended_dpi ?: 440).toString(),
-        "UMUM" to (device?.gen_sens?.toInt() ?: 95).toString(),
-        "RED DOT" to (device?.red_dot_sens?.toInt() ?: 90).toString(),
-        "2X SCOPE" to (device?.scope_2x_sens?.toInt() ?: 85).toString(),
-        "4X SCOPE" to (device?.scope_4x_sens?.toInt() ?: 80).toString(),
-        "SNIPER" to (device?.sniper_sens?.toInt() ?: 50).toString()
+        stringResource(id = R.string.dpi_label) to (device?.recommended_dpi ?: 440).toString(),
+        stringResource(id = R.string.general_sens) to (device?.gen_sens?.toInt() ?: 95).toString(),
+        stringResource(id = R.string.red_dot_sens_label) to (device?.red_dot_sens?.toInt() ?: 90).toString(),
+        stringResource(id = R.string.scope_2x_sens_label) to (device?.scope_2x_sens?.toInt() ?: 85).toString(),
+        stringResource(id = R.string.scope_4x_sens_label) to (device?.scope_4x_sens?.toInt() ?: 80).toString(),
+        stringResource(id = R.string.sniper_sens_label) to (device?.sniper_sens?.toInt() ?: 50).toString()
     )
 
     LazyVerticalGrid(
@@ -158,11 +160,15 @@ fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
         modifier = Modifier.border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text("UMPAN BALIK KALIBRASI", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            Text(stringResource(id = R.string.calibration_feedback), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(20.dp))
             
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                listOf("Licin", "Pas", "Kesat").forEach { option ->
+                listOf(
+                    stringResource(id = R.string.too_smooth),
+                    stringResource(id = R.string.just_right),
+                    stringResource(id = R.string.too_rough)
+                ).forEach { option ->
                     val isSelected = sensation == option
                     Button(
                         onClick = { sensation = option },
@@ -189,7 +195,7 @@ fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
                 ) {
                     Icon(Icons.Filled.ThumbUp, contentDescription = null, tint = AccentOrange)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("SEMPURNA", color = AccentOrange)
+                    Text(stringResource(id = R.string.perfect), color = AccentOrange)
                 }
                 OutlinedButton(
                     onClick = { onSubmit("Downvote", sensation) },
@@ -199,7 +205,7 @@ fun FeedbackSectionPro(onSubmit: (String, String) -> Unit) {
                 ) {
                     Icon(Icons.Filled.ThumbDown, contentDescription = null, tint = Color.Gray)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("SESUAIKAN", color = Color.Gray)
+                    Text(stringResource(id = R.string.adjust), color = Color.Gray)
                 }
             }
         }

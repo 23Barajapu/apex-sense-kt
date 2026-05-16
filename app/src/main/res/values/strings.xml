@@ -1,4 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ApexSense</string>
+    <string name="profile_title">Profil</string>
+    <string name="system_info">Info Sistem</string>
+    <string name="device_model">Model Perangkat</string>
+    <string name="total_ram">Total RAM</string>
+    <string name="android_version">Versi Android</string>
+    <string name="supported_abi">ABI yang Didukung</string>
+    <string name="language_title">Bahasa</string>
+    <string name="search_language">Cari bahasa</string>
+    <string name="viral_msg">Viralkan Game Corner ini dinegaramu jika tidak ada bahasamu disini</string>
+    <string name="default_system">Default Sistem</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">Beranda</string>
+    <string name="session_monitor">Monitor Sesi</string>
+    <string name="crosshair_custom">Kustom Crosshair</string>
+    <string name="game_vault">Gudang Game</string>
+    <string name="add_game">Tambah Game</string>
+    <string name="manage_library">Kelola Library</string>
+    <string name="start_optimization">Mulai Optimasi</string>
+
+    <!-- Game Tools -->
+    <string name="tools_title">Alat Game</string>
+    <string name="sensitivity_engine">Mesin Sensitivitas</string>
+    <string name="dpi_changer">Pengubah Resolusi (DPI)</string>
+    <string name="active_monitor">Monitor Aktif</string>
+    <string name="crosshair_settings">Pengaturan Crosshair</string>
+    <string name="device_optimization">Optimasi Perangkat</string>
+    <string name="boost_now">BOOST SEKARANG</string>
+
+    <!-- Home Screen Detailed -->
+    <string name="game_vault_header">PERPUSTAKAAN GAME</string>
+    <string name="game_library">Pustaka Game</string>
+    <string name="added">Ditambahkan</string>
+    <string name="system_health_header">KESEHATAN SISTEM</string>
+    <string name="ram_usage_label">PENGGUNAAN RAM</string>
+    <string name="storage_label">PENYIMPANAN</string>
+    <string name="optimized_performance">DIOPTIMALKAN UNTUK PERFORMA</string>
+    <string name="device_status">STATUS PERANGKAT</string>
+    <string name="cpu_load">BEBAN CPU</string>
+    <string name="temp_label">SUHU</string>
+    <string name="width_label">Lebar</string>
+    <string name="height_label">Tinggi</string>
+    <string name="calculate_now">HITUNG SEKARANG</string>
+
+    <!-- Game Tools Detailed -->
+    <string name="tools_header">Alat</string>
+    <string name="resolution_changer_label">Pengubah Resolusi</string>
+    <string name="resolution_changer_desc">Ubah resolusi layar (Lebar x Tinggi)</string>
+    <string name="apply_now">Terapkan Sekarang</string>
+    <string name="resolution_changed_to">Resolusi diubah ke %s</string>
+    <string name="need_permission_res">Butuh izin tambahan untuk ubah resolusi!</string>
+    <string name="failed_label">Gagal: %s</string>
+    <string name="smallest_width_label">Pengubah Lebar Terkecil</string>
+    <string name="smallest_width_desc">Timpa Lebar Terkecil ke perangkatmu secara langsung</string>
+    <string name="success_sw">Berhasil! Lebar Terkecil menjadi %d dp</string>
+    <string name="need_permission_guide">Butuh izin tambahan! Ikuti panduan di sini.</string>
+    <string name="sensitivity_engine_title">Sensitivity Engine</string>
+    <string name="sensitivity_engine_desc">Kalkulasi sensitivitas otomatis berdasarkan spek perangkat</string>
+    <string name="crosshair_title">Crosshair</string>
+    <string name="crosshair_desc">Titik referensi di layar untuk penyelarasan tampilan</string>
+    <string name="session_monitor_title">Monitor Sesi</string>
+    <string name="session_monitor_desc">Pantau performa perangkat saat kamu bermain</string>
+    <string name="info_cpu">Informasi CPU</string>
+    <string name="info_gpu">Informasi GPU</string>
+    <string name="info_ram">Informasi RAM</string>
+    <string name="info_battery">Informasi Baterai</string>
+    <string name="info_temp">Informasi Suhu</string>
+    <string name="info_fps">Informasi FPS</string>
+    <string name="customization">Kustomisasi</string>
+    <string name="reset">Atur Ulang</string>
+    <string name="size_label">Ukuran</string>
+    <string name="transparency_label">Transparansi</string>
+    <string name="rotation_label">Rotasi</string>
+    <string name="applied">Diterapkan</string>
+
+    <!-- Library Screen -->
+    <string name="add_game_to_vault">TAMBAH GAME KE GUDANG</string>
+    <string name="private_library">PUSTAKA PRIBADI</string>
+    <string name="vault_header">Gudang</string>
+    <string name="add_game_upper">TAMBAH GAME</string>
+    <string name="apex_boost_active">APEX BOOST AKTIF</string>
+    <string name="installed_label">TERINSTAL</string>
+
+    <!-- Dev Options Guide -->
+    <string name="dev_options_title">Aktivasi Opsi Pengembang</string>
+    <string name="dev_options_desc">Ikuti langkah-langkah di bawah untuk membuka fitur tingkat lanjut perangkatmu.</string>
+    <string name="step_settings">Buka Pengaturan</string>
+    <string name="step_settings_desc">Buka aplikasi Pengaturan di perangkatmu.</string>
+    <string name="step_about">Tentang Ponsel</string>
+    <string name="step_about_desc">Cari dan pilih menu \'Tentang Ponsel\' atau \'Informasi Perangkat\'.</string>
+    <string name="step_build">Ketuk Nomor Bentukan</string>
+    <string name="step_build_desc">Cari \'Nomor Bentukan\' (Build Number) dan ketuk sebanyak 7 kali berturut-turut.</string>
+    <string name="step_done">Selesai!</string>
+    <string name="step_done_desc">Sekarang Opsi Pengembang sudah aktif! Kembali ke aplikasi ini.</string>
+    <string name="i_understand">SAYA MENGERTI</string>
+
+    <!-- Sensitivity Engine Detailed -->
+    <string name="sensitivity_engine_info">Masukan spesifikasi layar perangkat Anda untuk mendapatkan kalkulasi sensitivitas terbaik.</string>
+    <string name="screen_width_label">Lebar Layar (Pixels)</string>
+    <string name="example_width">Contoh: 1080</string>
+    <string name="screen_height_label">Panjang Layar (Pixels)</string>
+    <string name="example_height">Contoh: 2400</string>
+    <string name="normal_dpi_label">DPI Normal (Opsional)</string>
+    <string name="dpi_placeholder">Kosongkan jika tidak tahu</string>
+    <string name="generate_sensitivity">BUAT SENSITIVITAS</string>
+
+    <!-- Sensitivity Result Detailed -->
+    <string name="system_scan_header">PEMINDAIAN SISTEM</string>
+    <string name="sensitivity_optimization">OPTIMALISASI SENSITIVITAS</string>
+    <string name="config_suitable_for">KONFIGURASI COCOK UNTUK %s</string>
+    <string name="optimized_values">NILAI TEROPTIMALISASI</string>
+    <string name="dpi_label">DPI</string>
+    <string name="general_sens">UMUM</string>
+    <string name="red_dot_sens_label">RED DOT</string>
+    <string name="scope_2x_sens_label">2X SCOPE</string>
+    <string name="scope_4x_sens_label">4X SCOPE</string>
+    <string name="sniper_sens_label">SNIPER</string>
+    <string name="calibration_feedback">UMPAN BALIK KALIBRASI</string>
+    <string name="too_smooth">Licin</string>
+    <string name="just_right">Pas</string>
+    <string name="too_rough">Kesat</string>
+    <string name="perfect">SEMPURNA</string>
+    <string name="adjust">SESUAIKAN</string>
 </resources>

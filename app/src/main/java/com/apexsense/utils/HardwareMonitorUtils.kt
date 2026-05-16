@@ -13,30 +13,33 @@ object HardwareMonitorUtils {
         return "${Build.MANUFACTURER} ${Build.MODEL}"
     }
 
+    private var lastActive: Long = 0
+    private var lastTotal: Long = 0
+
     fun getCpuUsage(): Int {
         return try {
             val reader = RandomAccessFile("/proc/stat", "r")
-            var load = reader.readLine() ?: return simulateCpuUsage()
-            var toks = load.split(" +".toRegex())
+            val load = reader.readLine() ?: return simulateCpuUsage().also { reader.close() }
+            val toks = load.split(" +".toRegex())
+            reader.close()
+            
             if (toks.size < 5) return simulateCpuUsage()
             
-            val idle1 = toks[4].toLong()
-            val cpu1 = toks[1].toLong() + toks[2].toLong() + toks[3].toLong() + toks[6].toLong() + toks[7].toLong() + toks[8].toLong()
+            val idle = toks[4].toLong()
+            val active = toks[1].toLong() + toks[2].toLong() + toks[3].toLong() + toks[6].toLong() + toks[7].toLong() + toks[8].toLong()
+            val total = active + idle
             
-            Thread.sleep(100)
+            val diffActive = active - lastActive
+            val diffTotal = total - lastTotal
             
-            reader.seek(0)
-            load = reader.readLine()
-            reader.close()
-            toks = load.split(" +".toRegex())
-            val idle2 = toks[4].toLong()
-            val cpu2 = toks[1].toLong() + toks[2].toLong() + toks[3].toLong() + toks[6].toLong() + toks[7].toLong() + toks[8].toLong()
+            lastActive = active
+            lastTotal = total
             
-            val diffCpu = cpu2 - cpu1
-            val diffTotal = (cpu2 + idle2) - (cpu1 + idle1)
-            
-            if (diffTotal == 0L) simulateCpuUsage()
-            else (diffCpu.toDouble() / diffTotal * 100).toInt().coerceIn(1, 99)
+            if (diffTotal <= 0L) {
+                simulateCpuUsage()
+            } else {
+                ((diffActive.toDouble() / diffTotal) * 100).toInt().coerceIn(1, 99)
+            }
         } catch (e: Exception) {
             simulateCpuUsage()
         }

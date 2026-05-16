@@ -19,6 +19,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.navigation.NavController
 import com.apexsense.presentation.navigation.Screen
+import androidx.compose.ui.res.stringResource
+import com.apexsense.R
 import com.apexsense.presentation.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +36,7 @@ fun SensitivityEngineScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("MESIN SENSITIVITAS", fontWeight = FontWeight.Black, fontSize = 16.sp) },
+                title = { Text(stringResource(id = R.string.sensitivity_engine_title), fontWeight = FontWeight.Black, fontSize = 16.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null, tint = Color.White)
@@ -55,7 +57,7 @@ fun SensitivityEngineScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(10.dp))
             
             Text(
-                "Masukan spesifikasi layar perangkat Anda untuk mendapatkan kalkulasi sensitivitas terbaik.",
+                stringResource(id = R.string.sensitivity_engine_info),
                 color = Color.Gray,
                 fontSize = 14.sp
             )
@@ -69,22 +71,22 @@ fun SensitivityEngineScreen(navController: NavController) {
                     EngineTextField(
                         value = width,
                         onValueChange = { width = it },
-                        label = "Lebar Layar (Pixels)",
-                        placeholder = "Contoh: 1080"
+                        label = stringResource(id = R.string.screen_width_label),
+                        placeholder = stringResource(id = R.string.example_width)
                     )
                     
                     EngineTextField(
                         value = height,
                         onValueChange = { height = it },
-                        label = "Panjang Layar (Pixels)",
-                        placeholder = "Contoh: 2400"
+                        label = stringResource(id = R.string.screen_height_label),
+                        placeholder = stringResource(id = R.string.example_height)
                     )
                     
                     EngineTextField(
                         value = dpi,
                         onValueChange = { dpi = it },
-                        label = "DPI Normal (Opsional)",
-                        placeholder = "Kosongkan jika tidak tahu"
+                        label = stringResource(id = R.string.normal_dpi_label),
+                        placeholder = stringResource(id = R.string.dpi_placeholder)
                     )
                 }
             }
@@ -105,7 +107,7 @@ fun SensitivityEngineScreen(navController: NavController) {
             ) {
                 Icon(Icons.Default.FlashOn, contentDescription = null)
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("BUAT SENSITIVITAS", fontWeight = FontWeight.Black)
+                Text(stringResource(id = R.string.generate_sensitivity), fontWeight = FontWeight.Black)
             }
             
             Spacer(modifier = Modifier.height(24.dp))

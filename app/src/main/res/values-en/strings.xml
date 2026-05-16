@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ApexSense</string>
+    <string name="profile_title">Profile</string>
+    <string name="system_info">System Info</string>
+    <string name="device_model">Device Model</string>
+    <string name="total_ram">Total RAM</string>
+    <string name="android_version">Android Version</string>
+    <string name="supported_abi">Supported ABI</string>
+    <string name="language_title">Language</string>
+    <string name="search_language">Search language</string>
+    <string name="viral_msg">Go viral with this Game Corner in your country if your language isn\'t here</string>
+    <string name="default_system">System Default</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">Home</string>
+    <string name="session_monitor">Session Monitor</string>
+    <string name="crosshair_custom">Custom Crosshair</string>
+    <string name="game_vault">Game Vault</string>
+    <string name="add_game">Add Game</string>
+    <string name="manage_library">Manage Library</string>
+    <string name="start_optimization">Start Optimization</string>
+
+    <!-- Game Tools -->
+    <string name="tools_title">Game Tools</string>
+    <string name="sensitivity_engine">Sensitivity Engine</string>
+    <string name="dpi_changer">Resolution (DPI) Changer</string>
+    <string name="active_monitor">Active Monitor</string>
+    <string name="crosshair_settings">Crosshair Settings</string>
+    <string name="device_optimization">Device Optimization</string>
+    <string name="boost_now">BOOST NOW</string>
+
+    <!-- Home Screen Detailed -->
+    <string name="game_vault_header">GAME LIBRARY</string>
+    <string name="game_library">Game Vault</string>
+    <string name="added">Added</string>
+    <string name="system_health_header">SYSTEM HEALTH</string>
+    <string name="ram_usage_label">RAM USAGE</string>
+    <string name="storage_label">STORAGE</string>
+    <string name="optimized_performance">OPTIMIZED FOR PERFORMANCE</string>
+    <string name="device_status">DEVICE STATUS</string>
+    <string name="cpu_load">CPU LOAD</string>
+    <string name="temp_label">TEMPERATURE</string>
+    <string name="width_label">Width</string>
+    <string name="height_label">Height</string>
+    <string name="calculate_now">CALCULATE NOW</string>
+
+    <!-- Game Tools Detailed -->
+    <string name="tools_header">Tools</string>
+    <string name="resolution_changer_label">Resolution Changer</string>
+    <string name="resolution_changer_desc">Change screen resolution (Width x Height)</string>
+    <string name="apply_now">Apply Now</string>
+    <string name="resolution_changed_to">Resolution changed to %s</string>
+    <string name="need_permission_res">Needs extra permission to change resolution!</string>
+    <string name="failed_label">Failed: %s</string>
+    <string name="smallest_width_label">Smallest Width Changer</string>
+    <string name="smallest_width_desc">Override Smallest Width directly on your device</string>
+    <string name="success_sw">Success! Smallest Width is now %d dp</string>
+    <string name="need_permission_guide">Needs extra permission! Follow the guide here.</string>
+    <string name="sensitivity_engine_title">Sensitivity Engine</string>
+    <string name="sensitivity_engine_desc">Automatic sensitivity calculation based on device specs</string>
+    <string name="crosshair_title">Crosshair</string>
+    <string name="crosshair_desc">Screen reference point for display alignment</string>
+    <string name="session_monitor_title">Session Monitor</string>
+    <string name="session_monitor_desc">Monitor device performance while you play</string>
+    <string name="info_cpu">CPU Information</string>
+    <string name="info_gpu">GPU Information</string>
+    <string name="info_ram">RAM Information</string>
+    <string name="info_battery">Battery Information</string>
+    <string name="info_temp">Temperature Information</string>
+    <string name="info_fps">FPS Information</string>
+    <string name="customization">Customization</string>
+    <string name="reset">Reset</string>
+    <string name="size_label">Size</string>
+    <string name="transparency_label">Transparency</string>
+    <string name="rotation_label">Rotation</string>
+    <string name="applied">Applied</string>
+
+    <!-- Library Screen -->
+    <string name="add_game_to_vault">ADD GAME TO VAULT</string>
+    <string name="private_library">PRIVATE LIBRARY</string>
+    <string name="vault_header">Vault</string>
+    <string name="add_game_upper">ADD GAME</string>
+    <string name="apex_boost_active">APEX BOOST ACTIVE</string>
+    <string name="installed_label">INSTALLED</string>
+
+    <!-- Dev Options Guide -->
+    <string name="dev_options_title">Activate Developer Options</string>
+    <string name="dev_options_desc">Follow the steps below to unlock advanced features on your device.</string>
+    <string name="step_settings">Open Settings</string>
+    <string name="step_settings_desc">Open the Settings app on your device.</string>
+    <string name="step_about">About Phone</string>
+    <string name="step_about_desc">Find and select \'About Phone\' or \'Device Information\'.</string>
+    <string name="step_build">Tap Build Number</string>
+    <string name="step_build_desc">Find \'Build Number\' and tap it 7 times consecutively.</string>
+    <string name="step_done">Done!</string>
+    <string name="step_done_desc">Developer Options are now active! Return to this app.</string>
+    <string name="i_understand">I UNDERSTAND</string>
+
+    <!-- Sensitivity Engine Detailed -->
+    <string name="sensitivity_engine_info">Enter your device screen specifications to get the best sensitivity calculations.</string>
+    <string name="screen_width_label">Screen Width (Pixels)</string>
+    <string name="example_width">Example: 1080</string>
+    <string name="screen_height_label">Screen Height (Pixels)</string>
+    <string name="example_height">Example: 2400</string>
+    <string name="normal_dpi_label">Normal DPI (Optional)</string>
+    <string name="dpi_placeholder">Leave blank if unknown</string>
+    <string name="generate_sensitivity">GENERATE SENSITIVITY</string>
+
+    <!-- Sensitivity Result Detailed -->
+    <string name="system_scan_header">SYSTEM SCAN</string>
+    <string name="sensitivity_optimization">SENSITIVITY OPTIMIZATION</string>
+    <string name="config_suitable_for">CONFIGURATION SUITABLE FOR %s</string>
+    <string name="optimized_values">OPTIMIZED VALUES</string>
+    <string name="dpi_label">DPI</string>
+    <string name="general_sens">GENERAL</string>
+    <string name="red_dot_sens_label">RED DOT</string>
+    <string name="scope_2x_sens_label">2X SCOPE</string>
+    <string name="scope_4x_sens_label">4X SCOPE</string>
+    <string name="sniper_sens_label">SNIPER</string>
+    <string name="calibration_feedback">CALIBRATION FEEDBACK</string>
+    <string name="too_smooth">Smooth</string>
+    <string name="just_right">Just Right</string>
+    <string name="too_rough">Rough</string>
+    <string name="perfect">PERFECT</string>
+    <string name="adjust">ADJUST</string>
+</resources>
