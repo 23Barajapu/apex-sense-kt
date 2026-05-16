@@ -61,7 +61,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     .padding(horizontal = 24.dp)
             ) {
                 Text(
-                    "ADD GAME TO VAULT",
+                    "TAMBAH GAME KE GUDANG",
                     color = Color.White,
                     fontWeight = FontWeight.Black,
                     fontSize = 18.sp,
@@ -109,8 +109,8 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                 TopAppBar(
                     title = { 
                         Column {
-                            Text("GAME VAULT", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-                            Text("PERSONALIZED LIBRARY", fontSize = 10.sp, color = AccentOrange)
+                            Text("GUDANG GAME", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                            Text("PUSTAKA PRIBADI", fontSize = 10.sp, color = AccentOrange)
                         }
                     },
                     navigationIcon = {
@@ -138,7 +138,7 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     horizontalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(2) }) {
-                        PageHeader(title = "Vault")
+                        PageHeader(title = "Gudang")
                     }
 
                     // Tambah Game Card
@@ -295,7 +295,7 @@ fun GameBoostOverlay(progress: Float, text: String) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "APEX BOOST ACTIVE",
+                    text = "APEX BOOST AKTIF",
                     color = Color.White,
                     fontWeight = FontWeight.Black,
                     fontSize = 22.sp,
@@ -411,7 +411,7 @@ fun ModernGameCard(game: com.apexsense.domain.model.Game, onDelete: () -> Unit, 
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("INSTALLED", color = AccentOrange, fontSize = 8.sp, fontWeight = FontWeight.Bold)
+                Text("TERINSTAL", color = AccentOrange, fontSize = 8.sp, fontWeight = FontWeight.Bold)
                 Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
             }
         }

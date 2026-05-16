@@ -31,8 +31,8 @@ fun HistoryScreen(navController: NavController, viewModel: HistoryViewModel = vi
             TopAppBar(
                 title = { 
                     Column {
-                        Text("PERF LOGS", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
-                        Text("HARDWARE ANALYTICS", fontSize = 10.sp, color = AccentOrange)
+                        Text("LOG PERFORMA", fontSize = 16.sp, fontWeight = FontWeight.Black, letterSpacing = 2.sp)
+                        Text("ANALITIK PERANGKAT", fontSize = 10.sp, color = AccentOrange)
                     }
                 },
                 navigationIcon = {
@@ -91,7 +91,7 @@ fun ModernHistoryItem(record: com.apexsense.domain.model.HardwareHistory) {
                     fontSize = 14.sp
                 )
                 Text(
-                    record.created_at?.take(16)?.replace("T", " ") ?: "RECENT SCAN", 
+                    record.created_at?.take(16)?.replace("T", " ") ?: "PINDAI TERBARU", 
                     color = Color.Gray, 
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Medium
@@ -100,7 +100,7 @@ fun ModernHistoryItem(record: com.apexsense.domain.model.HardwareHistory) {
             
             Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                 HistoryMetricPro("CPU", "${record.cpu_usage}%")
-                HistoryMetricPro("TEMP", "${record.temp.toInt()}°C")
+                HistoryMetricPro("SUHU", "${record.temp.toInt()}°C")
             }
         }
     }
