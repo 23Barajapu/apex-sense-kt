@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -175,19 +176,14 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
                     }
 
                     items(state.games) { game ->
-                        val context = androidx.compose.ui.platform.LocalContext.current
                         ModernGameCard(
                             game = game,
+                            enabled = !state.isBoosting,
                             onDelete = {
                                 game.package_name?.let { viewModel.removeManualGame(it) }
                             },
                             onLaunch = {
-                                game.package_name?.let { pkg ->
-                                    viewModel.launchGameWithBoost {
-                                        val intent = context.packageManager.getLaunchIntentForPackage(pkg)
-                                        intent?.let { context.startActivity(it) }
-                                    }
-                                }
+                                game.package_name?.let { viewModel.launchGameWithBoost(it) }
                             }
                         )
                     }
@@ -202,13 +198,17 @@ fun LibraryScreen(navController: NavController, viewModel: LibraryViewModel = vi
         }
 
         if (state.isBoosting) {
-            GameBoostOverlay(state.boostingProgress, state.boostingText)
+            GameBoostOverlay(
+                progress = state.boostingProgress,
+                text = state.boostingText,
+                modifier = Modifier.zIndex(10f)
+            )
         }
     }
 }
 
 @Composable
-fun GameBoostOverlay(progress: Float, text: String) {
+fun GameBoostOverlay(progress: Float, text: String, modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "boost")
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -231,7 +231,7 @@ fun GameBoostOverlay(progress: Float, text: String) {
     )
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color.Black.copy(alpha = 0.98f))
             .clickable(enabled = false) { },
@@ -336,7 +336,12 @@ fun GameBoostOverlay(progress: Float, text: String) {
 }
 
 @Composable
-fun ModernGameCard(game: com.apexsense.domain.model.Game, onDelete: () -> Unit, onLaunch: () -> Unit) {
+fun ModernGameCard(
+    game: com.apexsense.domain.model.Game,
+    enabled: Boolean = true,
+    onDelete: () -> Unit,
+    onLaunch: () -> Unit
+) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val appIcon = remember(game.package_name) {
         try {
@@ -348,10 +353,12 @@ fun ModernGameCard(game: com.apexsense.domain.model.Game, onDelete: () -> Unit, 
 
     Card(
         onClick = onLaunch,
+        enabled = enabled,
         colors = CardDefaults.cardColors(containerColor = SurfaceGray),
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.5f)
             .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
     ) {
         Column {
@@ -414,7 +421,18 @@ fun ModernGameCard(game: com.apexsense.domain.model.Game, onDelete: () -> Unit, 
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(stringResource(id = R.string.installed_label), color = AccentOrange, fontSize = 8.sp, fontWeight = FontWeight.Bold)
-                Icon(Icons.Filled.PlayArrow, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(16.dp))
+                IconButton(
+                    onClick = onLaunch,
+                    enabled = enabled,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Filled.PlayArrow,
+                        contentDescription = stringResource(id = R.string.boost_now),
+                        tint = if (enabled) AccentOrange else Color.Gray,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }

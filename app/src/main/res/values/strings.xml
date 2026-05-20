@@ -82,6 +82,11 @@
     <string name="vault_header">Gudang</string>
     <string name="add_game_upper">TAMBAH GAME</string>
     <string name="apex_boost_active">APEX BOOST AKTIF</string>
+    <string name="boost_step_clearing_ram">Membersihkan RAM…</string>
+    <string name="boost_step_optimizing_gpu">Mengoptimalkan GPU…</string>
+    <string name="boost_step_stabilizing_network">Menstabilkan jaringan…</string>
+    <string name="boost_step_applying_game_mode">Menerapkan mode game…</string>
+    <string name="boost_step_success">BOOST BERHASIL!</string>
     <string name="installed_label">TERINSTAL</string>
 
     <!-- Dev Options Guide -->

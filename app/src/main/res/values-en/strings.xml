@@ -82,6 +82,11 @@
     <string name="vault_header">Vault</string>
     <string name="add_game_upper">ADD GAME</string>
     <string name="apex_boost_active">APEX BOOST ACTIVE</string>
+    <string name="boost_step_clearing_ram">Clearing RAM…</string>
+    <string name="boost_step_optimizing_gpu">Optimizing GPU…</string>
+    <string name="boost_step_stabilizing_network">Stabilizing network…</string>
+    <string name="boost_step_applying_game_mode">Applying game mode…</string>
+    <string name="boost_step_success">BOOST SUCCESSFUL!</string>
     <string name="installed_label">INSTALLED</string>
 
     <!-- Dev Options Guide -->
